@@ -758,24 +758,22 @@ for t_index = index_start:index_step:index_end
         
     end  
     
-% %     GXTEST
-%     % add in the pre-scaled pressure source term as a mass source    
-%     if p_source >= t_index 
-%         if strcmp(source.p_mode, 'dirichlet')
-%             
-%             % enforce the source values as a dirichlet boundary condition
-%             rhox(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             
-%         else
-%             
-%             % add the source values to the existing field values
-%             rhox(p_source_pos_index) = rhox(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = rhoy(p_source_pos_index) + source.p(p_source_sig_index, t_index);       
-%             
-%         end
-%     end
-% %     GXTEST
+    % add in the pre-scaled pressure source term as a mass source    
+    if p_source >= t_index 
+        if strcmp(source.p_mode, 'dirichlet')
+            
+            % enforce the source values as a dirichlet boundary condition
+            rhox(p_source_pos_index) = source.p(p_source_sig_index, t_index);
+            rhoy(p_source_pos_index) = source.p(p_source_sig_index, t_index);
+            
+        else
+            
+            % add the source values to the existing field values
+            rhox(p_source_pos_index) = rhox(p_source_pos_index) + source.p(p_source_sig_index, t_index);
+            rhoy(p_source_pos_index) = rhoy(p_source_pos_index) + source.p(p_source_sig_index, t_index);       
+            
+        end
+    end
     
     if ~nonlinear
         switch equation_of_state
@@ -792,43 +790,6 @@ for t_index = index_start:index_step:index_end
                    + absorb_tau .* real(ifft2( absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)) )) ...
                    - absorb_eta .* real(ifft2( absorb_nabla2 .* fft2(rhox + rhoy) )) ...
                    );
-%             GXTEST
-            case 'absorbing_TZ14'
-                p = c.^2 .* (+ absorb_tau .* real(ifft2(absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)))) ...
-                             - absorb_eta .* real(ifft2(absorb_nabla2 .* fft2(rhox + rhoy))));
-            case 'absorbing_TZ17'
-                p = cb.^2 .* ( (rhox + rhoy) + ...
-                    absorb_tau .* real(ifft2(absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)))) - ...
-                    absorb_eta .* real(ifft2(absorb_nabla2 .* fft2(rhox + rhoy))));
-            case 'absorbing_TF17'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                
-%                 p = -absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy - ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) + ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-%                     absorb_C_k5 .* rho0_nablau + ...
-%                     absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-                    absorb_C_k5 .* rho0_nablau - ...
-                    absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
-%                 medium.p_test(t_index) = p(64, 95);
-%                 medium.max_p_vec(t_index) = max(abs(p(:)));
-%                 if t_index > 2000
-%                     disp(t_index);
-%                 end
-%                 disp(t_index);
-%                 p = c.^2 .* rho_xy;
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            
-%             GXTEST
                
         end
     else
@@ -850,26 +811,6 @@ for t_index = index_start:index_step:index_end
                 
         end
     end
-    
-%     GXTEST
-    if p_source >= t_index 
-        if strcmp(source.p_mode, 'dirichlet')
-            
-            % enforce the source values as a dirichlet boundary condition
-%             rhox(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-            p(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-            
-        else
-            
-            % add the source values to the existing field values
-%             rhox(p_source_pos_index) = rhox(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = rhoy(p_source_pos_index) + source.p(p_source_sig_index, t_index);       
-            p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-            
-        end
-    end
-%     GXTEST
     
     % enforce initial conditions if source.p0 is defined instead of time
     % varying sources

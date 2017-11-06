@@ -99,8 +99,10 @@ if p_source
             clear grid_point_sep;
             
         else
-            if numel(c) == 1
-                
+%             GXTEST
+%             if numel(c) == 1
+            if numel(medium.sound_speed) == 1
+%             GXTEST
                 % compute the scale parameter based on the homogeneous
                 % sound speed 
                 source.p = source.p .* (2 .* dt ./ (N .* c .* kgrid.dx));
@@ -110,7 +112,10 @@ if p_source
                 % compute the scale parameter seperately for each source
                 % position based on the sound speed at that position
                 for p_index = 1:length(source.p(:, 1))        
-                    source.p(p_index, :) = source.p(p_index, :) .* (2 .* dt ./ (N .* c(p_source_pos_index(p_index)) .* kgrid.dx));
+%                     GXTEST
+%                     source.p(p_index, :) = source.p(p_index, :) .* (2 .* dt ./ (N .* c(p_source_pos_index(p_index)) .* kgrid.dx));
+                    source.p(p_index, :) = source.p(p_index, :) .* (2 .* dt ./ (N .* medium.sound_speed(p_source_pos_index(p_index)) .* kgrid.dx));
+%                     GXTEST
                 end
                 
             end

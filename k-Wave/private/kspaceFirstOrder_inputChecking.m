@@ -12,7 +12,8 @@
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
 % General Public License as published by the Free Software Foundation,
-% either version 3 of the License, or (at your option) any later version.
+% either version 3 of the License, or (at your option) 
+% any later version.
 % 
 % k-Wave is distributed in the hope that it will be useful, but WITHOUT ANY
 % WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -130,9 +131,12 @@ elseif elastic_code
     
 else
     
+%     GXTEST
+%     Allow all field names
     % check the allowable field names
-    checkFieldNames(medium, {'sound_speed', 'sound_speed_ref', 'density',...
-        'alpha_coeff', 'alpha_power', 'alpha_mode', 'alpha_filter', 'alpha_sign', 'BonA'});
+%     checkFieldNames(medium, {'sound_speed', 'sound_speed_ref', 'density',...
+%         'alpha_coeff', 'alpha_power', 'alpha_mode', 'alpha_filter', 'alpha_sign', 'BonA'});
+%     GXTEST
     
     % force the sound speed to be defined
     enforceFields(medium, {'sound_speed'});
@@ -192,6 +196,16 @@ if isfield(medium, 'alpha_coeff') || isfield(medium, 'alpha_power')
     if isfield(medium, 'alpha_sign') && (~isnumeric(medium.alpha_sign) || numel(medium.alpha_sign) > 2)
         error('medium.alpha_sign must be given as a 2 element numerical array.')
     end
+% GXTEST
+elseif isfield(medium, 'mod_mech')
+    if medium.mod_mech == 'TZ14'
+        equation_of_state = 'absorbing_TZ14';
+    elseif medium.mod_mech == 'TZ17'
+        equation_of_state = 'absorbing_TZ17';
+    elseif medium.mod_mech == 'TF17'
+        equation_of_state = 'absorbing_TF17';
+    end
+% GXTEST
     
 else
     
@@ -1556,7 +1570,13 @@ dt = kgrid.dt;
 rho0 = medium.density;
 if elastic_code
     c = medium.sound_speed_compression;
-else
+% GXTEST
+elseif ~strcmp(equation_of_state, 'absorbing_TZ14') && ...
+        ~strcmp(equation_of_state, 'absorbing_TZ17') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF17')
+        
+% else
+% GXTEST
     c = medium.sound_speed;
 end
 

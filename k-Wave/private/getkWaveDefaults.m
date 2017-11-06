@@ -49,7 +49,10 @@ PLOT_PML_DEF                        = true;
 PML_ALPHA_DEF                       = 2;
 PML_INSIDE_DEF                      = true;
 RECORD_MOVIE_DEF                    = false;
-SCALE_SOURCE_TERMS_DEF              = true;
+% GXTEST
+% SCALE_SOURCE_TERMS_DEF              = true;
+SCALE_SOURCE_TERMS_DEF              = false;
+% GXTEST
 SMOOTH_P0_DEF                       = true;
 SMOOTH_C0_DEF                       = false;
 SMOOTH_RHO0_DEF                     = false;
@@ -57,8 +60,10 @@ SOURCE_S_MODE_DEF                   = 'additive';
 SOURCE_P_MODE_DEF                   = 'additive';
 SOURCE_U_MODE_DEF                   = 'additive';
 USE_KSPACE_DEF                      = true;
+% GXTEST
 USE_SG_DEF                          = true;
-
+% USE_SG_DEF                          = false;
+% GXTEST
 % set defaults for literals that depend on predefined values
 if exist('MFILE', 'var')
     MOVIE_NAME_DEF                  = [getDateString, '-', MFILE];

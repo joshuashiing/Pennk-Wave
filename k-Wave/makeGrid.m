@@ -1,3 +1,4 @@
+
 function kgrid = makeGrid(varargin)
 %MAKEGRID Create k-Wave grid structure.
 %

@@ -108,20 +108,6 @@ elseif strcmp(equation_of_state, 'absorbing_TZ14')
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
     clear c0 w0 gamma
-elseif strcmp(equation_of_state, 'absorbing_TZ17')
-    gamma = atan(1 ./ medium.Q) / pi;
-    w0 = medium.f0 * 2 * pi;
-    c0 = medium.sound_speed;
-    cb = c0 ./ (1 + gamma);
-    a0 = pi * gamma .* w0.^gamma ./ (2 * c0);
-    absorb_tau = -2 * a0;
-    absorb_eta = -2 * gamma .* (1+gamma) .* c0 ./ w0;
-    absorb_nabla1 = (kgrid.k) .^ (-1/2);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = (kgrid.k) .^ (1/2);
-    absorb_nabla2(isinf(absorb_nabla2)) = 0;
-    absorb_nabla2 = ifftshift(absorb_nabla2);
 elseif strcmp(equation_of_state, 'absorbing_TF17')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
@@ -146,33 +132,33 @@ elseif strcmp(equation_of_state, 'absorbing_TF17')
     B_tmp = [ones(size(gamma_ur));
             (1 - gamma_ur); 
             (-1/2*gamma_ur + 1/2*gamma_ur.^2)];
-    B_col1 = [B_tmp .* (ones(3, 1) * cos(-pi*gamma_ur/2));
-              B_tmp .* (ones(3, 1) * sin(-pi*gamma_ur/2))];
+    B_col1 = [B_tmp .* cos(-pi*gamma_ur/2);
+              B_tmp .* sin(-pi*gamma_ur/2)];
     B_tmp = [ones(size(gamma_ur));
             (2 - 2*gamma_ur); 
             (1 - 3*gamma_ur + 2*gamma_ur.^2)];
-    B_col2 = [B_tmp .* (ones(3, 1) * cos(-pi*gamma_ur));
-              B_tmp .* (ones(3, 1) * sin(-pi*gamma_ur))];
+    B_col2 = [B_tmp .* cos(-pi*gamma_ur);
+              B_tmp .* sin(-pi*gamma_ur)];
     B_tmp = [ones(size(gamma_ur));
             (3 - 3*gamma_ur); 
             (3 - 15/2*gamma_ur + 9/2*gamma_ur.^2)];
-    B_col3 = [B_tmp .* (ones(3, 1) * cos(-3/2*pi*gamma_ur));
-              B_tmp .* (ones(3, 1) * sin(-3/2*pi*gamma_ur))];
+    B_col3 = [B_tmp .* cos(-3/2*pi*gamma_ur);
+              B_tmp .* sin(-3/2*pi*gamma_ur)];
     B_tmp = [ones(size(gamma_ur));
             (2 - gamma_ur); 
             (1 - 3/2*gamma_ur + 1/2*gamma_ur.^2)];
-    B_col4 = [B_tmp .* (ones(3, 1) * cos(pi/2 - pi*gamma_ur/2));
-              B_tmp .* (ones(3, 1) * sin(pi/2 - pi*gamma_ur/2))];
+    B_col4 = [B_tmp .* cos(pi/2 - pi*gamma_ur/2);
+              B_tmp .* sin(pi/2 - pi*gamma_ur/2)];
     B_tmp = [ones(size(gamma_ur));
             (3 - 2*gamma_ur); 
             (3 - 5*gamma_ur + 2*gamma_ur.^2)];
-    B_col5 = [B_tmp .* (ones(3, 1) * cos(pi/2 - pi*gamma_ur));
-              B_tmp .* (ones(3, 1) * sin(pi/2 - pi*gamma_ur))];
+    B_col5 = [B_tmp .* cos(pi/2 - pi*gamma_ur);
+              B_tmp .* sin(pi/2 - pi*gamma_ur)];
     B_tmp = [ones(size(gamma_ur));
             (4 - 3*gamma_ur); 
             (6 - 21/2*gamma_ur + 9/2*gamma_ur.^2)];
-    B_col6 = [B_tmp .* (ones(3, 1) * cos(pi/2 - 3/2*pi*gamma_ur));
-              B_tmp .* (ones(3, 1) * sin(pi/2 - 3/2*pi*gamma_ur))];
+    B_col6 = [B_tmp .* cos(pi/2 - 3/2*pi*gamma_ur);
+              B_tmp .* sin(pi/2 - 3/2*pi*gamma_ur)];
           
     % Solve B * A = [1; 2; 1; 0; 0; 0] and assign k coefficients
     C_k1_ur = zeros(size(gamma_ur));
@@ -181,7 +167,7 @@ elseif strcmp(equation_of_state, 'absorbing_TF17')
     C_k4_ur = C_k1_ur;
     C_k5_ur = C_k1_ur;
     C_k6_ur = C_k1_ur;
-    for i_grid = 1 : size(gamma_ur, 2)
+    for i_grid = 1 : size(gamma_ur)
         B_grid = [B_col1(:, i_grid), B_col2(:, i_grid), ...
             B_col3(:, i_grid), B_col4(:, i_grid), ...
             B_col5(:, i_grid), B_col6(:, i_grid)];
