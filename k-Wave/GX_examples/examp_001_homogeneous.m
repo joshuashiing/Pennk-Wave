@@ -18,7 +18,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0 = 200;           % Reference frequency [Hz]
 c0 = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 5;             % Quality factor
+Q = 32.5;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
