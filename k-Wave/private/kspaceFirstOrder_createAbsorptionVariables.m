@@ -116,10 +116,10 @@ elseif strcmp(equation_of_state, 'absorbing_TZ17')
     a0 = pi * gamma .* w0.^gamma ./ (2 * c0);
     absorb_tau = -2 * a0;
     absorb_eta = -2 * gamma .* (1+gamma) .* c0 ./ w0;
-    absorb_nabla1 = (kgrid.k) .^ (-1/2);
+    absorb_nabla1 = (kgrid.k) .^ (-1);
     absorb_nabla1(isinf(absorb_nabla1)) = 0;
     absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = (kgrid.k) .^ (1/2);
+    absorb_nabla2 = kgrid.k;
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
 elseif strcmp(equation_of_state, 'absorbing_TF17')
@@ -204,10 +204,10 @@ elseif strcmp(equation_of_state, 'absorbing_TF17')
     
     clear *_ur B_col*
     
-    absorb_nabla1 = (kgrid.k) .^ (-1/2);
+    absorb_nabla1 = (kgrid.k) .^ (-1);
     absorb_nabla1(isinf(absorb_nabla1)) = 0;
     absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = (kgrid.k) .^ (1/2);
+    absorb_nabla2 = kgrid.k;
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
     

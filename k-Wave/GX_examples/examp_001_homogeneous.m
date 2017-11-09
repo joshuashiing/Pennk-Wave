@@ -16,9 +16,9 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 % Medium Parameters
 % =========================================================================
 
-f0 = 100;           % Reference frequency [Hz]
+f0 = 200;           % Reference frequency [Hz]
 c0 = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 32.5;             % Quality factor
+Q = 5;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -86,13 +86,21 @@ medium.mod_mech = 'TF17';
 % medium.max_p_vec = zeros(size(kgrid.t_array));
 % medium.p_test = zeros(size(kgrid.t_array));
 d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+d3 = d3 * 4;
 
+[f_vec, d1_vec] = comp_spec(kgrid.t_array, d1);
+[f_vec, d2_vec] = comp_spec(kgrid.t_array, d2);
+[f_vec, d3_vec] = comp_spec(kgrid.t_array, d3);
 
-
-figure;
+figure(1);
 plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d2, 'b--', 'linewidth', 3);
-plot(kgrid.t_array, d3 * 4, 'r--', 'linewidth', 2);
+plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
+
+figure(2);
+plot(f_vec, abs(d1_vec), 'k', 'linewidth', 3); hold on;
+plot(f_vec, abs(d2_vec), 'b--', 'linewidth', 3);
+plot(f_vec, abs(d3_vec), 'r--', 'linewidth', 2);
 
 
 % figure;
