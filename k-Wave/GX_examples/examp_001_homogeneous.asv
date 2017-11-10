@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 10;             % Quality factor
+Q = 100000;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -90,9 +90,9 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % Compute the Numerical Solution
 % =========================================================================
-medium.mod_mech = 'TZ14';
+% medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-% medium.mod_mech = 'TF17';
+medium.mod_mech = 'TF17';
 
 d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 d3 = d3 * 4;
@@ -116,15 +116,15 @@ d3 = d3 * 4;
 
 figure();
 subplot(2, 1, 1);
-% plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
+plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d2, 'b--', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
-title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
+title(['Q = ', num2str(Q), 'Red ], 'fontsize', 20); 
 xlabel('Time (s)');
 set(gca, 'fontsize', 14);
 
 subplot(2, 1, 2);
-% plot(f_vec, abs(d1_vec), 'k', 'linewidth', 3); hold on;
+plot(f_vec, abs(d1_vec), 'k', 'linewidth', 3); hold on;
 plot(f_vec, abs(d2_vec), 'b--', 'linewidth', 3); hold on;
 plot(f_vec, abs(d3_vec), 'r--', 'linewidth', 2);
 f_b = 0;

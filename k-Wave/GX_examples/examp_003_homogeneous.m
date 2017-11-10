@@ -1,6 +1,6 @@
 % Author: Guangchi Xing
-% Date: 10/19/2017
-% High frequency single station 
+% Date: 11/09/2017
+% High frequency two stations
 
 clear;
 
@@ -17,9 +17,9 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 % Medium Parameters
 % =========================================================================
 
-f0_m = 200;           % Reference frequency [Hz]
+f0_m = 300;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 10;             % Quality factor
+Q = 5;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -29,8 +29,8 @@ density = 2200;     % Density [kg/m^3]
 f_rw_c = 200;       % Center frequency of ricker wavelet [Hz]
 x_src = 0.;          % Source location in the x direction [m]
 y_src = -34.5;       % Source location in the y direction [m]
-x_rec = 0.;          % Receiver location in the x direction [m]
-y_rec = 34.5;        % Receiver location in the y direction [m]
+x_rec = [0.; 0.];          % Receiver location in the x direction [m]
+y_rec = [20.; 40.];        % Receiver location in the y direction [m]
 
 % =========================================================================
 % Simulation Parameters
@@ -84,15 +84,16 @@ sensor.mask(nx_rec, ny_rec) = 1;
 % Compute the Analytical Solution
 % =========================================================================
 
+% source.p = source.p / c0;
 d1 = lole_analytical_2d(kgrid, medium, source, sensor);
 d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 
 % =========================================================================
 % Compute the Numerical Solution
 % =========================================================================
-medium.mod_mech = 'TZ14';
+% medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-% medium.mod_mech = 'TF17';
+medium.mod_mech = 'TF17';
 
 d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 d3 = d3 * 4;
@@ -100,35 +101,30 @@ d3 = d3 * 4;
 % =========================================================================
 % Post-Processing
 % =========================================================================
+
 [f_vec, d1_vec] = comp_spec(kgrid.t_array, d1);
 [f_vec, d2_vec] = comp_spec(kgrid.t_array, d2);
 [f_vec, d3_vec] = comp_spec(kgrid.t_array, d3);
 
-% figure(1);
-% plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
-% plot(kgrid.t_array, d2, 'b--', 'linewidth', 3);
-% plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
-% 
-% figure(2);
-% plot(f_vec, abs(d1_vec), 'k', 'linewidth', 3); hold on;
-% plot(f_vec, abs(d2_vec), 'b--', 'linewidth', 3);
-% plot(f_vec, abs(d3_vec), 'r--', 'linewidth', 2);
+r = sqrt((x_rec - x_src).^2 + (y_rec - y_src).^2);
+alpha_meas1 = measure_alpha(d1_vec(1, :), d1_vec(2, :), r(1), r(2), abs(r(2) - r(1)));
+alpha_meas2 = measure_alpha(d2_vec(1, :), d2_vec(2, :), r(1), r(2), abs(r(2) - r(1)));
+alpha_meas3 = measure_alpha(d3_vec(1, :), d3_vec(2, :), r(1), r(2), abs(r(2) - r(1)));
+cp_meas1 = measure_cp(f_vec, d1_vec(1, :), d1_vec(2, :), abs(r(2) - r(1)));
+cp_meas2 = measure_cp(f_vec, d2_vec(1, :), d2_vec(2, :), abs(r(2) - r(1)));
+cp_meas3 = measure_cp(f_vec, d3_vec(1, :), d2_vec(2, :), abs(r(2) - r(1)));
 
-figure();
-subplot(2, 1, 1);
-% plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
-plot(kgrid.t_array, d2, 'b--', 'linewidth', 3); hold on;
-plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
-title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
-xlabel('Time (s)');
-set(gca, 'fontsize', 14);
-
-subplot(2, 1, 2);
-% plot(f_vec, abs(d1_vec), 'k', 'linewidth', 3); hold on;
-plot(f_vec, abs(d2_vec), 'b--', 'linewidth', 3); hold on;
-plot(f_vec, abs(d3_vec), 'r--', 'linewidth', 2);
 f_b = 0;
-f_e = 600;
+f_e = 500;
+figure(1);
+subplot(211);
+plot(f_vec, alpha_meas1, 'k', 'linewidth', 3); hold on;
+plot(f_vec, alpha_meas2, 'b', 'linewidth', 2); hold on;
+plot(f_vec, alpha_meas3, 'r--', 'linewidth', 2);
 xlim([f_b f_e]);
-xlabel('Frequency (Hz)');
-set(gca, 'fontsize', 14);
+subplot(212);
+plot(f_vec, cp_meas1, 'k', 'linewidth', 3); hold on;
+plot(f_vec, cp_meas2, 'b', 'linewidth', 2); hold on;
+plot(f_vec, cp_meas3, 'r--', 'linewidth', 2);
+xlim([f_b f_e]);
+

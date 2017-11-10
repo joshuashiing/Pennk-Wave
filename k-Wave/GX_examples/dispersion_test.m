@@ -11,13 +11,13 @@ clc;
 f0_m = 200;     % Reference frequency of the medium
 c0_m = 2089;    % Reference phase velocity
 rho = 2200;
-Q   = 32;
-f0 = 200;       % Reference frequency for calculation
+Q   = 10;
+f0 = 30;       % Reference frequency for calculation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set up the frequency of interest
-nf  = 100;
-f   = linspace(100, 300, nf);
+nf  = 200;
+f   = linspace(10, 60, nf);
 w   = 2 * pi * f;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,7 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % NCQ Dispersion Relation in Zhu & Harris, 2014
+% mod_mech = 'TZ14';
 % c = sqrt(M0 / rho);
 % % lhs = (w .^ 2) / (c .^ 2);
 % % rhs = c0^(2*gamma) * w0^(-2*gamma) * cos(pi*gamma) * k.^(2*gamma+2) + ...
@@ -93,6 +94,7 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % NCQ Dispersion for Zhu 2017 Draft
+% mod_mech = 'TZ17';
 % a0 = pi * gamma * w0^gamma / (2 * c0);
 % % a0 = pi * gamma / (2 * c0 * w0^gamma);
 % % 
@@ -151,6 +153,8 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Taylor Fitting Dispersion
 
+mod_mech = 'TF17';
+
 % Generate the B matrix
 B = zeros(6, 6);
 B_tmp = [1; (1 - gamma); (-1/2*gamma + 1/2*gamma^2)];
@@ -185,9 +189,9 @@ k6_te = (B(1:3, 6)' * x_vec + 1i * B(4:6, 6)' * x_vec) * w0^4 / (c^3);
 
 % Solve B * A = [1; 2; 1; 0; 0; 0] and assign k coefficients
 A = B \ [1; 2; 1; 0; 0; 0];
-A(6) = 0;
+% A(6) = 0;
 % A(5) = 0;
-A(1) = 0;
+% A(1) = 0;
 C_k1 = A(1) * c * w0;
 C_k2 = A(2) * c^2;
 C_k3 = A(3) * c^3 / w0;
@@ -265,13 +269,26 @@ val_b2 = alpha_sol;
 subplot(221);
 plot(f, val_a1, 'k', 'linewidth', 2); hold on;
 plot(f, val_a2, 'r--', 'linewidth', 2);
+ylabel('Cp (m/s)')
+set(gca, 'fontsize', 14);
+title(['Q = ', num2str(Q), ' | f0 = ', num2str(f0), 'Hz'], 'fontsize', 14); 
+
 subplot(223);
 plot(f, (val_a2 - val_a1) ./ val_a1 * 100, 'r', 'linewidth', 2);
+ylabel('Cp Discrep. (%)')
+xlabel('Frequency (Hz)');
+set(gca, 'fontsize', 14);
+
 subplot(222);
 plot(f, val_b1, 'k', 'linewidth', 2); hold on;
 plot(f, val_b2, 'r--', 'linewidth', 2);
+ylabel('Alpha (m/s)')
+set(gca, 'fontsize', 14);
+title(['Red Dashed Line: ', mod_mech], 'fontsize', 14); 
+
 subplot(224);
 plot(f, (val_b2 - val_b1) ./ val_b1 * 100, 'r', 'linewidth', 2);
-
-
+ylabel('Alpha Discrep. (%)')
+xlabel('Frequency (Hz)');
+set(gca, 'fontsize', 14);
 
