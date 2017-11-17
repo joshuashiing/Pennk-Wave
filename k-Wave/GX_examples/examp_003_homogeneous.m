@@ -30,7 +30,7 @@ f_rw_c = 200;       % Center frequency of ricker wavelet [Hz]
 x_src = 0.;          % Source location in the x direction [m]
 y_src = -34.5;       % Source location in the y direction [m]
 x_rec = [0.; 0.];          % Receiver location in the x direction [m]
-y_rec = [20.; 40.];        % Receiver location in the y direction [m]
+y_rec = [-14.5; 35.5];        % Receiver location in the y direction [m]
 
 % =========================================================================
 % Simulation Parameters
@@ -118,12 +118,12 @@ f_b = 0;
 f_e = 500;
 figure(1);
 subplot(211);
-plot(f_vec, alpha_meas1, 'k', 'linewidth', 3); hold on;
+% plot(f_vec, alpha_meas1, 'k', 'linewidth', 3); hold on;
 plot(f_vec, alpha_meas2, 'b', 'linewidth', 2); hold on;
 plot(f_vec, alpha_meas3, 'r--', 'linewidth', 2);
 xlim([f_b f_e]);
 subplot(212);
-plot(f_vec, cp_meas1, 'k', 'linewidth', 3); hold on;
+% plot(f_vec, cp_meas1, 'k', 'linewidth', 3); hold on;
 plot(f_vec, cp_meas2, 'b', 'linewidth', 2); hold on;
 plot(f_vec, cp_meas3, 'r--', 'linewidth', 2);
 xlim([f_b f_e]);

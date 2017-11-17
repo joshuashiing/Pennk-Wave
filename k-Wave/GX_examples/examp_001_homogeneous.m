@@ -90,9 +90,9 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % Compute the Numerical Solution
 % =========================================================================
-medium.mod_mech = 'TZ14';
+% medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-% medium.mod_mech = 'TF17';
+medium.mod_mech = 'TF17';
 
 % d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 input_args = {'RecordMovie', true};
