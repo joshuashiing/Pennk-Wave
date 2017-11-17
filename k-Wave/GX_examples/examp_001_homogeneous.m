@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 32.5;             % Quality factor
+Q = 10;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -92,11 +92,12 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'TF17';
+% medium.mod_mech = 'TF17';
+medium.mod_mech = 'DT17';
 
-% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
-input_args = {'RecordMovie', true};
-d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+% input_args = {'RecordMovie', true};
+% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
 
 d3 = d3 * 4;
 
@@ -106,6 +107,7 @@ d3 = d3 * 4;
 [f_vec, d1_vec] = comp_spec(kgrid.t_array, d1);
 [f_vec, d2_vec] = comp_spec(kgrid.t_array, d2);
 [f_vec, d3_vec] = comp_spec(kgrid.t_array, d3);
+
 
 % figure(1);
 % plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
@@ -119,10 +121,11 @@ d3 = d3 * 4;
 
 figure();
 subplot(2, 1, 1);
-plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
+% plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d2, 'b--', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
-title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
+% title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
+title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech, ' (order 1)'], 'fontsize', 14); 
 xlabel('Time (s)');
 set(gca, 'fontsize', 14);
 
@@ -136,14 +139,14 @@ xlim([f_b f_e]);
 xlabel('Frequency (Hz)');
 set(gca, 'fontsize', 14);
 
-% for proposal
-figure();
-gc = 0.7;
-plot(kgrid.t_array, d1, 'color', [gc, gc, gc], 'linewidth', 3); hold on;
-plot(kgrid.t_array, d2, 'k', 'linewidth', 3); hold on;
-plot(kgrid.t_array, d3, 'r--', 'linewidth', 3);
-% plot(kgrid.t_array, d3, 'ro', 'markersize', 2);
-xlabel('Time (s)');
-ylabel('Pressure')
-legend('Analytical solution (lossless)', 'Analytical solution', 'Numerical solution');
-set(gca, 'fontsize', 14);
+% % for proposal
+% figure();
+% gc = 0.7;
+% plot(kgrid.t_array, d1, 'color', [gc, gc, gc], 'linewidth', 3); hold on;
+% plot(kgrid.t_array, d2, 'k', 'linewidth', 3); hold on;
+% plot(kgrid.t_array, d3, 'r--', 'linewidth', 3);
+% % plot(kgrid.t_array, d3, 'ro', 'markersize', 2);
+% xlabel('Time (s)');
+% ylabel('Pressure')
+% legend('Analytical solution (lossless)', 'Analytical solution', 'Numerical solution');
+% set(gca, 'fontsize', 14);

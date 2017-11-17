@@ -92,6 +92,7 @@ if strcmp(equation_of_state, 'absorbing')
            error('medium.alpha_sign must be given as a 2 element array controlling absorption and dispersion, respectively.');
        end
     end
+    
 % GXTEST    
 elseif strcmp(equation_of_state, 'absorbing_TZ14')
     gamma = atan(1 ./ medium.Q) / pi;
@@ -108,6 +109,7 @@ elseif strcmp(equation_of_state, 'absorbing_TZ14')
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
     clear c0 w0 gamma
+    
 elseif strcmp(equation_of_state, 'absorbing_TZ17')
     gamma = atan(1 ./ medium.Q) / pi;
     w0 = medium.f0 * 2 * pi;
@@ -122,6 +124,38 @@ elseif strcmp(equation_of_state, 'absorbing_TZ17')
     absorb_nabla2 = kgrid.k;
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
+    clear c0 w0 gamma
+    
+elseif strcmp(equation_of_state, 'absorbing_DT17')
+    % Calculate media parameter matrices
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+    
+%     absorb_C_k1 = gamma .* (gamma - 1) .* c .* w0;
+%     absorb_C_k2 = (1 - 2*gamma) .* (1 + 2*gamma) .* c.^2;
+%     absorb_C_k3 = gamma .* (1 + 3*gamma) .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c;
+% %     absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+%     absorb_C_k5 = pi * gamma.^2 .* (1 + 2*gamma) .* c.^2 ./ w0;
+    
+    absorb_C_k1 = -gamma .* c .* w0;
+    absorb_C_k2 = ones(size(gamma)) .* c.^2;
+    absorb_C_k3 = gamma .* c.^3 ./ w0;
+    absorb_C_k4 = pi * gamma .* c;
+%     absorb_C_k5 = zeros(size(gamma));
+    absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+    
+    absorb_nabla1 = (kgrid.k) .^ (-1);
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
+    absorb_nabla1 = ifftshift(absorb_nabla1);
+    absorb_nabla2 = kgrid.k;
+    absorb_nabla2(isinf(absorb_nabla2)) = 0;
+    absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    clear c0 w0 gamma
+    
 elseif strcmp(equation_of_state, 'absorbing_TF17')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
@@ -210,6 +244,8 @@ elseif strcmp(equation_of_state, 'absorbing_TF17')
     absorb_nabla2 = kgrid.k;
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
     absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    clear c0 w0 gamma
     
 % GXTEST    
     
