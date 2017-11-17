@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 10;             % Quality factor
+Q = 32.5;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -94,7 +94,10 @@ medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
 % medium.mod_mech = 'TF17';
 
-d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+input_args = {'RecordMovie', true};
+d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+
 d3 = d3 * 4;
 
 % =========================================================================
@@ -116,7 +119,7 @@ d3 = d3 * 4;
 
 figure();
 subplot(2, 1, 1);
-% plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
+plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d2, 'b--', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
 title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
@@ -131,4 +134,16 @@ f_b = 0;
 f_e = 600;
 xlim([f_b f_e]);
 xlabel('Frequency (Hz)');
+set(gca, 'fontsize', 14);
+
+% for proposal
+figure();
+gc = 0.7;
+plot(kgrid.t_array, d1, 'color', [gc, gc, gc], 'linewidth', 3); hold on;
+plot(kgrid.t_array, d2, 'k', 'linewidth', 3); hold on;
+plot(kgrid.t_array, d3, 'r--', 'linewidth', 3);
+% plot(kgrid.t_array, d3, 'ro', 'markersize', 2);
+xlabel('Time (s)');
+ylabel('Pressure')
+legend('Analytical solution (lossless)', 'Analytical solution', 'Numerical solution');
 set(gca, 'fontsize', 14);
