@@ -11,13 +11,14 @@ clc;
 f0_m = 200;     % Reference frequency of the medium
 c0_m = 2089;    % Reference phase velocity
 rho = 2200;
-Q   = 10;
-f0 = 60;       % Reference frequency for calculation
+Q   = 32;
+f0 = 40;       % Reference frequency for calculation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set up the frequency of interest
-nf  = 200;
-f   = linspace(10, 100, nf);
+nf  = 100;
+f   = linspace(10, 60, nf);
+f = 40;
 w   = 2 * pi * f;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,61 +220,61 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 % cp_sol = w ./ real(k_sol);
 % alpha_sol = -imag(k_sol);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Double Taylor Fitting Dispersion
-
-mod_mech = 'DT17';
-
-% A1 = -gamma + gamma^2 + 4.2337*gamma^3;
-% A2 = 1 - 4*gamma^2 - 8*gamma^3;
-% A3 = gamma + 3*gamma^2 + 3.7663*gamma^3;
-% A4 = pi*gamma - 4.4335*gamma^3;
-% A5 = pi*gamma^2 + 2*pi*gamma^3;
-% A6 = 0;
-
-% A1 = -gamma + gamma^2;
-% A2 = 1 - 4*gamma^2;
-% A3 = gamma + 3*gamma^2;
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Double Taylor Fitting Dispersion
+% 
+% mod_mech = 'DT17';
+% 
+% % A1 = -gamma + gamma^2 + 4.2337*gamma^3;
+% % A2 = 1 - 4*gamma^2 - 8*gamma^3;
+% % A3 = gamma + 3*gamma^2 + 3.7663*gamma^3;
+% % A4 = pi*gamma - 4.4335*gamma^3;
+% % A5 = pi*gamma^2 + 2*pi*gamma^3;
+% % A6 = 0;
+% 
+% % A1 = -gamma + gamma^2;
+% % A2 = 1 - 4*gamma^2;
+% % A3 = gamma + 3*gamma^2;
+% % A4 = pi*gamma;
+% % A5 = pi*gamma^2;
+% % A6 = 0;
+% 
+% A1 = -gamma;
+% A2 = 1;
+% A3 = gamma;
 % A4 = pi*gamma;
-% A5 = pi*gamma^2;
+% A5 = 0;
 % A6 = 0;
-
-A1 = -gamma;
-A2 = 1;
-A3 = gamma;
-A4 = pi*gamma;
-A5 = 0;
-A6 = 0;
-
-
-A = [A1 A2 A3 A4 A5 A6]';
-
-C_k1 = A(1) * c * w0;
-C_k2 = A(2) * c^2;
-C_k3 = A(3) * c^3 / w0;
-C_k4 = A(4) * c;
-C_k5 = A(5) * c^2 / w0;
-C_k6 = A(6) * c^3 / (w0^2);
-
-C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6];
-
-% Solve the dispersion relation
-k_sol = zeros(size(w));
-for i = 1 : nf
-    i
-    w_i = w(i);
-    lhs = w_i ^ 2;
-    
-    syms kk;
-    eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
-        C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^3);
-    k_root = vpasolve(eqn, kk, k(i));
-    k_root = double(k_root);
-    [~, i_root] = min(abs(k_root - k(i)));
-    k_sol(i) = k_root(i_root);
-end
-cp_sol = w ./ real(k_sol);
-alpha_sol = -imag(k_sol);
+% 
+% 
+% A = [A1 A2 A3 A4 A5 A6]';
+% 
+% C_k1 = A(1) * c * w0;
+% C_k2 = A(2) * c^2;
+% C_k3 = A(3) * c^3 / w0;
+% C_k4 = A(4) * c;
+% C_k5 = A(5) * c^2 / w0;
+% C_k6 = A(6) * c^3 / (w0^2);
+% 
+% C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6];
+% 
+% % Solve the dispersion relation
+% k_sol = zeros(size(w));
+% for i = 1 : nf
+%     i
+%     w_i = w(i);
+%     lhs = w_i ^ 2;
+%     
+%     syms kk;
+%     eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
+%         C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^3);
+%     k_root = vpasolve(eqn, kk, k(i));
+%     k_root = double(k_root);
+%     [~, i_root] = min(abs(k_root - k(i)));
+%     k_sol(i) = k_root(i_root);
+% end
+% cp_sol = w ./ real(k_sol);
+% alpha_sol = -imag(k_sol);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Play with (w/w0)^(2*gamma)
@@ -293,10 +294,87 @@ alpha_sol = -imag(k_sol);
 % cp_sol = w ./ real(k_sol);
 % alpha_sol = -imag(k_sol);
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FDTF(Finite-Difference Taylor-Fitting)
+
+mod_mech = 'FDTF17';
+
+% Generate the B matrix
+B = zeros(6, 6);
+B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
+B(1:3, 1) = B_tmp * cos(-pi*gamma);
+B(4:6, 1) = B_tmp * sin(-pi*gamma);
+B_tmp = [1; (4 - 4*gamma); (6 - 14*gamma + 8*gamma^2)];
+B(1:3, 2) = B_tmp * cos(-2*pi*gamma);
+B(4:6, 2) = B_tmp * sin(-2*pi*gamma);
+B_tmp = [1; (6 - 6*gamma); (15 - 33*gamma + 18*gamma^2)];
+B(1:3, 3) = B_tmp * cos(-3*pi*gamma);
+B(4:6, 3) = B_tmp * sin(-3*pi*gamma);
+B_tmp = [1; (3 - 2*gamma); (3 - 5*gamma + 2*gamma^2)];
+B(1:3, 4) = B_tmp * cos(pi/2 - pi*gamma);
+B(4:6, 4) = B_tmp * sin(pi/2 - pi*gamma);
+B_tmp = [1; (5 - 4*gamma); (10 - 18*gamma + 8*gamma^2)];
+B(1:3, 5) = B_tmp * cos(pi/2 - 2*pi*gamma);
+B(4:6, 5) = B_tmp * sin(pi/2 - 2*pi*gamma);
+B_tmp = [1; (7 - 6*gamma); (21 - 39*gamma + 18*gamma^2)];
+B(1:3, 6) = B_tmp * cos(pi/2 - 3*pi*gamma);
+B(4:6, 6) = B_tmp * sin(pi/2 - 3*pi*gamma);
+
+
+% Check Taylor expansion
+x = (w - w0) ./ w0;
+x_vec = [ones(size(x)); x; x.^2];
+k1_te = (B(1:3, 1)' * x_vec + 1i * B(4:6, 1)' * x_vec) * w0^2 / (c^2);
+k2_te = (B(1:3, 2)' * x_vec + 1i * B(4:6, 2)' * x_vec) * w0^4 / (c^4);
+k3_te = (B(1:3, 3)' * x_vec + 1i * B(4:6, 3)' * x_vec) * w0^6 / (c^6);
+k4_te = (B(1:3, 4)' * x_vec + 1i * B(4:6, 4)' * x_vec) * w0^3 / (c^2);
+k5_te = (B(1:3, 5)' * x_vec + 1i * B(4:6, 5)' * x_vec) * w0^5 / (c^4);
+k6_te = (B(1:3, 6)' * x_vec + 1i * B(4:6, 6)' * x_vec) * w0^7 / (c^6);
+
+% Solve B * A = [1; 2; 1; 0; 0; 0] and assign k coefficients
+A = B \ [1; 2; 1; 0; 0; 0];
+
+% A(6) = 0;
+% A(5) = 0;
+% A(1) = 0;
+C_k1 = A(1) * c^2;
+C_k2 = A(2) * c^4 / (w0^2);
+C_k3 = A(3) * c^6 / (w0^4);
+C_k4 = A(4) * c^2 / w0;
+C_k5 = A(5) * c^4 / (w0^3);
+C_k6 = A(6) * c^6 / (w0^5);
+
+C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6];
+
+% Plog in the k value to check the validation of taylor expansion
+w2_sol = [k'.^2 k'.^4 k'.^4 (1i*w').*k'.^2 (1i*w').*k'.^4 (1i*w').*k'.^6] * C_k;
+k_sol = 1 / c * w0^gamma * w.^(1-gamma) * exp(1i * (-pi*gamma/2));
+
+
+% % Solve the dispersion relation
+% k_sol = zeros(size(w));
+% for i = 1 : nf
+%     i
+%     w_i = w(i);
+%     lhs = w_i ^ 2;
+%     
+%     syms kk;
+%     eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^4 + C_k3 * kk^6 + ...
+%         C_k4 * (1i*w_i) * kk^2 + C_k5 * (1i*w_i) * kk^4 + C_k6 * (1i*w_i) * kk^6);
+%     k_root = vpasolve(eqn, kk, k(i));
+%     k_root = double(k_root);
+%     [~, i_root] = min(abs(k_root - k(i)));
+%     k_sol(i) = k_root(i_root);
+% end
+% cp_sol = w ./ real(k_sol);
+% alpha_sol = -imag(k_sol);
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-figure;
-
+% figure;
+% 
 % % Tes t plot for complex value
 % val = k_m;
 % plot(f, real(val), 'k', 'linewidth', 2); hold on;
@@ -308,42 +386,42 @@ figure;
 % plot(f, val, 'k', 'linewidth', 2);
 
 % % Test for two values
-% val1 = cp;
-% val2 = cp_sol;
+% val1 = real(k);
+% val2 = real(k_sol);
 % subplot(211);
 % plot(f, val1, 'k', 'linewidth', 2); hold on;
 % plot(f, val2, 'r--', 'linewidth', 2);
 % subplot(212);
 % plot(f, (val2 - val1) ./ val1 * 100, 'r', 'linewidth', 2);
 
-% Test for two groups of real values
-val_a1 = cp;
-val_a2 = cp_sol;
-val_b1 = alpha;
-val_b2 = alpha_sol;
-subplot(221);
-plot(f, val_a1, 'k', 'linewidth', 2); hold on;
-plot(f, val_a2, 'r--', 'linewidth', 2);
-ylabel('Cp (m/s)')
-set(gca, 'fontsize', 14);
-title(['Q = ', num2str(Q), ' | f0 = ', num2str(f0), 'Hz'], 'fontsize', 14); 
-
-subplot(223);
-plot(f, (val_a2 - val_a1) ./ val_a1 * 100, 'r', 'linewidth', 2);
-ylabel('Cp Discrep. (%)')
-xlabel('Frequency (Hz)');
-set(gca, 'fontsize', 14);
-
-subplot(222);
-plot(f, val_b1, 'k', 'linewidth', 2); hold on;
-plot(f, val_b2, 'r--', 'linewidth', 2);
-ylabel('Alpha (m/s)')
-set(gca, 'fontsize', 14);
-title(['Red Dashed Line: ', mod_mech], 'fontsize', 14); 
-
-subplot(224);
-plot(f, (val_b2 - val_b1) ./ val_b1 * 100, 'r', 'linewidth', 2);
-ylabel('Alpha Discrep. (%)')
-xlabel('Frequency (Hz)');
-set(gca, 'fontsize', 14);
-
+% % Test for two groups of real values
+% val_a1 = cp;
+% val_a2 = cp_sol;
+% val_b1 = alpha;
+% val_b2 = alpha_sol;
+% subplot(221);
+% plot(f, val_a1, 'k', 'linewidth', 2); hold on;
+% plot(f, val_a2, 'r--', 'linewidth', 2);
+% ylabel('Cp (m/s)')
+% set(gca, 'fontsize', 14);
+% title(['Q = ', num2str(Q), ' | f0 = ', num2str(f0), 'Hz'], 'fontsize', 14); 
+% 
+% subplot(223);
+% plot(f, (val_a2 - val_a1) ./ val_a1 * 100, 'r', 'linewidth', 2);
+% ylabel('Cp Discrep. (%)')
+% xlabel('Frequency (Hz)');
+% set(gca, 'fontsize', 14);
+% 
+% subplot(222);
+% plot(f, val_b1, 'k', 'linewidth', 2); hold on;
+% plot(f, val_b2, 'r--', 'linewidth', 2);
+% ylabel('Alpha (m/s)')
+% set(gca, 'fontsize', 14);
+% title(['Red Dashed Line: ', mod_mech], 'fontsize', 14); 
+% 
+% subplot(224);
+% plot(f, (val_b2 - val_b1) ./ val_b1 * 100, 'r', 'linewidth', 2);
+% ylabel('Alpha Discrep. (%)')
+% xlabel('Frequency (Hz)');
+% set(gca, 'fontsize', 14);
+% 
