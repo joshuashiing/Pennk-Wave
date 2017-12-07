@@ -9,9 +9,9 @@ z_sol = solve(eqn, z)
 z1_sol = z_sol[0]
 z2_sol = z_sol[1]
 z3_sol = z_sol[2]
-z1_te = series(z1_sol, x)
+# z1_te = series(z1_sol, x)
 print(z1_sol)
-print(z1_te)
+# print(z1_te)
 # print(series(z1_sol))
 print('abc')
 

@@ -65,7 +65,7 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 
 mod_mech = 'PF17';
 
-m_max = 4;
+m_max = 3;
 n_max = m_max;
 n_x_n = 4;
 
@@ -107,6 +107,7 @@ end
 rhs_node = [((1 + x_n_vec).^2); zeros(size(x_n_vec))];
 % cd_vec = (B' * B) \ (B' * rhs_node);
 cd_vec = B \ rhs_node;
+% return
 
 c_vec0 = cd_vec(1 : m_max);
 d_vec0 = cd_vec((m_max+1) : end);
@@ -132,8 +133,8 @@ c_k2 = c_vec(2);
 d_k2 = d_vec(2);
 c_k3 = c_vec(3);
 d_k3 = d_vec(3);
-c_k4 = c_vec(4);
-d_k4 = d_vec(4);
+% c_k4 = c_vec(4);
+% d_k4 = d_vec(4);
 
 % w2_rhs = zeros(4, length(x));
 % w2_rhs(1, :) = c_k1 * k.^2;
@@ -165,10 +166,10 @@ for i = 1 : nf
 %     % test
     
     syms kk;
-    eqn = (lhs == c_k1 * kk^2 + c_k2 * kk^4 + c_k3 * kk^6 + c_k4 * kk^8 + ...
-        d_k1 * (1i*w_i) * kk^2 + d_k2 * (1i*w_i) * kk^4 + d_k3 * (1i*w_i) * kk^6) + d_k4 * (1i*w_i) * kk^8;
-%     eqn = (lhs == c_k1 * kk^2 + c_k2 * kk^4 + c_k3 * kk^6 + ...
-%         d_k1 * (1i*w_i) * kk^2 + d_k2 * (1i*w_i) * kk^4 + d_k3 * (1i*w_i) * kk^6);
+%     eqn = (lhs == c_k1 * kk^2 + c_k2 * kk^4 + c_k3 * kk^6 + c_k4 * kk^8 + ...
+%         d_k1 * (1i*w_i) * kk^2 + d_k2 * (1i*w_i) * kk^4 + d_k3 * (1i*w_i) * kk^6) + d_k4 * (1i*w_i) * kk^8;
+    eqn = (lhs == c_k1 * kk^2 + c_k2 * kk^4 + c_k3 * kk^6 + ...
+        d_k1 * (1i*w_i) * kk^2 + d_k2 * (1i*w_i) * kk^4 + d_k3 * (1i*w_i) * kk^6);
 %     eqn = (lhs == c_k1 * kk^2 + c_k2 * kk^4 + ...
 %         d_k1 * (1i*w_i) * kk^2 + d_k2 * (1i*w_i) * kk^4);
 %     eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^4 + C_k3 * kk^6 + + C_k4 * kk^8 + ...
