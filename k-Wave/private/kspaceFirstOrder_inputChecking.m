@@ -206,6 +206,8 @@ elseif isfield(medium, 'mod_mech')
         equation_of_state = 'absorbing_TF17';
     elseif medium.mod_mech == 'DT17'
         equation_of_state = 'absorbing_DT17';
+    elseif medium.mod_mech == 'TT17'
+        equation_of_state = 'absorbing_TT17';
     end
 % GXTEST
     
@@ -1576,7 +1578,8 @@ if elastic_code
 elseif ~strcmp(equation_of_state, 'absorbing_TZ14') && ...
         ~strcmp(equation_of_state, 'absorbing_TZ17') && ...
         ~strcmp(equation_of_state, 'absorbing_TF17') && ...
-        ~strcmp(equation_of_state, 'absorbing_DT17')
+        ~strcmp(equation_of_state, 'absorbing_DT17') && ...
+        ~strcmp(equation_of_state, 'absorbing_TT17')
         
 % else
 % GXTEST

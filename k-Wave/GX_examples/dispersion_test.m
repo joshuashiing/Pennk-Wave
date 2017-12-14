@@ -11,8 +11,8 @@ clear;
 f0_m = 200;     % Reference frequency of the medium
 c0_m = 2089;    % Reference phase velocity
 rho = 2200;
-Q   = 10;
-f0 = 50;       % Reference frequency for calculation
+Q   = 32.5;
+f0 = 30;       % Reference frequency for calculation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set up the frequency of interest
@@ -229,61 +229,61 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 % % cp_sol = w ./ real(k_sol);
 % % alpha_sol = -imag(k_sol);
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % Double Taylor Fitting Dispersion
-% 
-% mod_mech = 'DT17';
-% 
-% % A1 = -gamma + gamma^2 + 4.2337*gamma^3;
-% % A2 = 1 - 4*gamma^2 - 8*gamma^3;
-% % A3 = gamma + 3*gamma^2 + 3.7663*gamma^3;
-% % A4 = pi*gamma - 4.4335*gamma^3;
-% % A5 = pi*gamma^2 + 2*pi*gamma^3;
-% % A6 = 0;
-% 
-% % A1 = -gamma + gamma^2;
-% % A2 = 1 - 4*gamma^2;
-% % A3 = gamma + 3*gamma^2;
-% % A4 = pi*gamma;
-% % A5 = pi*gamma^2;
-% % A6 = 0;
-% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Double Taylor Fitting Dispersion
+
+mod_mech = 'DT17';
+
+% A1 = -gamma + gamma^2 + 4.2337*gamma^3;
+% A2 = 1 - 4*gamma^2 - 8*gamma^3;
+% A3 = gamma + 3*gamma^2 + 3.7663*gamma^3;
+% A4 = pi*gamma - 4.4335*gamma^3;
+% A5 = pi*gamma^2 + 2*pi*gamma^3;
+% A6 = 0;
+
+A1 = -gamma + gamma^2;
+A2 = 1 - 4*gamma^2;
+A3 = gamma + 3*gamma^2;
+A4 = pi*gamma;
+A5 = pi*gamma^2;
+A6 = 0;
+
 % A1 = -gamma;
 % A2 = 1;
 % A3 = gamma;
 % A4 = pi*gamma;
 % A5 = 0;
 % A6 = 0;
-% 
-% 
-% A = [A1 A2 A3 A4 A5 A6]';
-% 
-% C_k1 = A(1) * c * w0;
-% C_k2 = A(2) * c^2;
-% C_k3 = A(3) * c^3 / w0;
-% C_k4 = A(4) * c;
-% C_k5 = A(5) * c^2 / w0;
-% C_k6 = A(6) * c^3 / (w0^2);
-% 
-% C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6];
-% 
-% % Solve the dispersion relation
-% k_sol = zeros(size(w));
-% for i = 1 : nf
-%     i
-%     w_i = w(i);
-%     lhs = w_i ^ 2;
-%     
-%     syms kk;
-%     eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
-%         C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^3);
-%     k_root = vpasolve(eqn, kk, k(i));
-%     k_root = double(k_root);
-%     [~, i_root] = min(abs(k_root - k(i)));
-%     k_sol(i) = k_root(i_root);
-% end
-% cp_sol = w ./ real(k_sol);
-% alpha_sol = -imag(k_sol);
+
+
+A = [A1 A2 A3 A4 A5 A6]';
+
+C_k1 = A(1) * c * w0;
+C_k2 = A(2) * c^2;
+C_k3 = A(3) * c^3 / w0;
+C_k4 = A(4) * c;
+C_k5 = A(5) * c^2 / w0;
+C_k6 = A(6) * c^3 / (w0^2);
+
+C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6];
+
+% Solve the dispersion relation
+k_sol = zeros(size(w));
+for i = 1 : nf
+    i
+    w_i = w(i);
+    lhs = w_i ^ 2;
+    
+    syms kk;
+    eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
+        C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^3);
+    k_root = vpasolve(eqn, kk, k(i));
+    k_root = double(k_root);
+    [~, i_root] = min(abs(k_root - k(i)));
+    k_sol(i) = k_root(i_root);
+end
+cp_sol = w ./ real(k_sol);
+alpha_sol = -imag(k_sol);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Play with (w/w0)^(2*gamma)
@@ -433,140 +433,140 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 % % cp_sol = w ./ real(k_sol);
 % % alpha_sol = -imag(k_sol);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FDTF(Finite-Difference Taylor-Fitting) 8-th order
-
-mod_mech = 'FDTF17';
-
-% Generate the B matrix
-% % left hand side = w^2
-% B = zeros(6, 6);
-% B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
-% B(1:3, 1) = B_tmp * cos(-pi*gamma);
-% B(4:6, 1) = B_tmp * sin(-pi*gamma);
-% B_tmp = [1; (4 - 4*gamma); (6 - 14*gamma + 8*gamma^2)];
-% B(1:3, 2) = B_tmp * cos(-2*pi*gamma);
-% B(4:6, 2) = B_tmp * sin(-2*pi*gamma);
-% B_tmp = [1; (6 - 6*gamma); (15 - 33*gamma + 18*gamma^2)];
-% B(1:3, 3) = B_tmp * cos(-3*pi*gamma);
-% B(4:6, 3) = B_tmp * sin(-3*pi*gamma);
-% B_tmp = [1; (3 - 2*gamma); (3 - 5*gamma + 2*gamma^2)];
-% B(1:3, 4) = B_tmp * cos(pi/2 - pi*gamma);
-% B(4:6, 4) = B_tmp * sin(pi/2 - pi*gamma);
-% B_tmp = [1; (5 - 4*gamma); (10 - 18*gamma + 8*gamma^2)];
-% B(1:3, 5) = B_tmp * cos(pi/2 - 2*pi*gamma);
-% B(4:6, 5) = B_tmp * sin(pi/2 - 2*pi*gamma);
-% B_tmp = [1; (7 - 6*gamma); (21 - 39*gamma + 18*gamma^2)];
-% B(1:3, 6) = B_tmp * cos(pi/2 - 3*pi*gamma);
-% B(4:6, 6) = B_tmp * sin(pi/2 - 3*pi*gamma);
-
-% left hand side = 1
-B = zeros(8, 8);
-B_tmp = [1; (-2*gamma); (gamma + 2*gamma^2); (-2/3*gamma - 2*gamma^2 - 4/3*gamma^3)];
-B(1:4, 1) = B_tmp * cos(-pi*gamma);
-B(5:8, 1) = B_tmp * sin(-pi*gamma);
-B_tmp = [1; (2 - 4*gamma); (1 - 6*gamma + 8*gamma^2); (-4/3*gamma + 8*gamma^2 - 32/3*gamma^3)];
-B(1:4, 2) = B_tmp * cos(-2*pi*gamma);
-B(5:8, 2) = B_tmp * sin(-2*pi*gamma);
-B_tmp = [1; (4 - 6*gamma); (6 - 21*gamma + 18*gamma^2); (4 - 26*gamma + 54*gamma^2 - 36*gamma^3)];
-B(1:4, 3) = B_tmp * cos(-3*pi*gamma);
-B(5:8, 3) = B_tmp * sin(-3*pi*gamma);
-B_tmp = [1; (6 - 8*gamma); (15 - 44*gamma + 32*gamma^2); (20 - 296/3*gamma + 160*gamma^2 - 256/3*gamma^3)];
-B(1:4, 4) = B_tmp * cos(-4*pi*gamma);
-B(5:8, 4) = B_tmp * sin(-4*pi*gamma);
-B_tmp = [1; (1 - 2*gamma); (-gamma + 2*gamma^2); (1/3*gamma - 4/3*gamma^3)];
-B(1:4, 5) = B_tmp * cos(pi/2 - pi*gamma);
-B(5:8, 5) = B_tmp * sin(pi/2 - pi*gamma);
-B_tmp = [1; (3 - 4*gamma); (3 - 10*gamma + 8*gamma^2); (1 - 22/3*gamma + 16*gamma^2 - 32/3*gamma^3)];
-B(1:4, 6) = B_tmp * cos(pi/2 - 2*pi*gamma);
-B(5:8, 6) = B_tmp * sin(pi/2 - 2*pi*gamma);
-B_tmp = [1; (5 - 6*gamma); (10 - 27*gamma + 18*gamma^2); (10 - 47*gamma + 72*gamma^2 - 36*gamma^3)];
-B(1:4, 7) = B_tmp * cos(pi/2 - 3*pi*gamma);
-B(5:8, 7) = B_tmp * sin(pi/2 - 3*pi*gamma);
-B_tmp = [1; (7 - 8*gamma); (21 - 52*gamma + 32*gamma^2); (35 - 428/3*gamma + 192*gamma^2 - 256/3*gamma^3)];
-B(1:4, 8) = B_tmp * cos(pi/2 - 4*pi*gamma);
-B(5:8, 8) = B_tmp * sin(pi/2 - 4*pi*gamma);
-
-% Check Taylor expansion
-x = (w - w0) ./ w0;
-x_vec = [ones(size(x)); x; x.^2; x.^3];
-k1_te = (transpose(B(1:4, 1)) * x_vec + 1i * transpose(B(5:8, 1)) * x_vec) * w0^0 / (c^2);
-k2_te = (transpose(B(1:4, 2)) * x_vec + 1i * transpose(B(5:8, 2)) * x_vec) * w0^2 / (c^4);
-k3_te = (transpose(B(1:4, 3)) * x_vec + 1i * transpose(B(5:8, 3)) * x_vec) * w0^4 / (c^6);
-k4_te = (transpose(B(1:4, 4)) * x_vec + 1i * transpose(B(5:8, 4)) * x_vec) * w0^6 / (c^8);
-k5_te = (transpose(B(1:4, 5)) * x_vec + 1i * transpose(B(5:8, 5)) * x_vec) * w0^1 / (c^2);
-k6_te = (transpose(B(1:4, 6)) * x_vec + 1i * transpose(B(5:8, 6)) * x_vec) * w0^3 / (c^4);
-k7_te = (transpose(B(1:4, 7)) * x_vec + 1i * transpose(B(5:8, 7)) * x_vec) * w0^5 / (c^6);
-k8_te = (transpose(B(1:4, 8)) * x_vec + 1i * transpose(B(5:8, 8)) * x_vec) * w0^7 / (c^8);
-
-
-% Solve B * A = [1; 2; 1; 0; 0; 0; 0; 0] and assign k coefficients
-% A = B \ [1; 2; 1; 0; 0; 0; 0; 0]; % left hand side = w^2
-A = B \ [1; 0; 0; 0; 0; 0; 0; 0]; % left hand side = 1
-
-C_k1 = A(1) * c^2 / (w0^0);
-C_k2 = A(2) * c^4 / (w0^2);
-C_k3 = A(3) * c^6 / (w0^4);
-C_k4 = A(4) * c^8 / (w0^6);
-C_k5 = A(5) * c^2 / (w0^1);
-C_k6 = A(6) * c^4 / (w0^3);
-C_k7 = A(7) * c^6 / (w0^5);
-C_k8 = A(8) * c^8 / (w0^7);
-
-C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6; C_k7; C_k8];
-
-% Plug in the k value to check the validation of taylor expansion
-
-lhs = ones(size(x));
-rhs = A(1) * (1+x).^(0-2*gamma) * exp(1i*(-pi*gamma)) + ...
-      A(2) * (1+x).^(2-4*gamma) * exp(1i*(-2*pi*gamma)) + ...
-      A(3) * (1+x).^(4-6*gamma) * exp(1i*(-3*pi*gamma)) + ...
-      A(4) * (1+x).^(6-8*gamma) * exp(1i*(-4*pi*gamma)) + ...
-      A(5) * (1+x).^(1-2*gamma) * exp(1i*(pi/2 - pi*gamma)) + ...
-      A(6) * (1+x).^(3-4*gamma) * exp(1i*(pi/2 - 2*pi*gamma)) + ...
-      A(7) * (1+x).^(5-6*gamma) * exp(1i*(pi/2 - 2*pi*gamma)) + ...
-      A(8) * (1+x).^(7-8*gamma) * exp(1i*(pi/2 - 4*pi*gamma));
-
-rhsa = zeros(6, length(x));
-rhsa(1, :) = A(1) * (1+x).^(2-2*gamma) * exp(1i*(-pi*gamma));
-rhsa(2, :) = A(2) * (1+x).^(4-4*gamma) * exp(1i*(-2*pi*gamma));
-rhsa(3, :) = A(3) * (1+x).^(6-6*gamma) * exp(1i*(-3*pi*gamma));
-rhsa(4, :) = A(4) * (1+x).^(3-2*gamma) * exp(1i*(pi/2 - pi*gamma));
-rhsa(5, :) = A(5) * (1+x).^(5-4*gamma) * exp(1i*(pi/2 - 2*pi*gamma));
-rhsa(6, :) = A(6) * (1+x).^(7-6*gamma) * exp(1i*(pi/2 - 3*pi*gamma));
-
-w2_rhs = zeros(8, length(x));
-w2_rhs(1, :) = C_k(1) * k.^2;
-w2_rhs(2, :) = C_k(2) * k.^4;
-w2_rhs(3, :) = C_k(3) * k.^6;
-w2_rhs(4, :) = C_k(3) * k.^8;
-w2_rhs(5, :) = C_k(4) * (1i*w) .* k.^2;
-w2_rhs(6, :) = C_k(5) * (1i*w) .* k.^4;
-w2_rhs(7, :) = C_k(6) * (1i*w) .* k.^6;
-w2_rhs(8, :) = C_k(6) * (1i*w) .* k.^8;
-w2_rhs = sum(w2_rhs);
-
-% Solve the dispersion relation
-k_sol = zeros(size(w));
-for i = 1 : nf
-    i
-    w_i = w(i);
-    lhs = w_i ^ 2;
-    
-    syms kk;
-    eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^4 + C_k3 * kk^6 + + C_k4 * kk^8 + ...
-        C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^4 + C_k7 * (1i*w_i) * kk^6 + C_k8 * (1i*w_i) * kk^8);
-%     eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
-%         C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k3 * (1i*w_i) * kk^3);
-    k_root = vpasolve(eqn, kk, k(i));
-    k_root = double(k_root);
-    [~, i_root] = min(abs(k_root - k(i)));
-%     [~, i_root] = min(abs(k_root - k(i).^2));
-    k_sol(i) = k_root(i_root);
-%     k_sol(i) = sqrt(k_root(i_root));
-end
-cp_sol = w ./ real(k_sol);
-alpha_sol = -imag(k_sol);
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % FDTF(Finite-Difference Taylor-Fitting) 8-th order
+% 
+% mod_mech = 'FDTF17';
+% 
+% % Generate the B matrix
+% % % left hand side = w^2
+% % B = zeros(6, 6);
+% % B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
+% % B(1:3, 1) = B_tmp * cos(-pi*gamma);
+% % B(4:6, 1) = B_tmp * sin(-pi*gamma);
+% % B_tmp = [1; (4 - 4*gamma); (6 - 14*gamma + 8*gamma^2)];
+% % B(1:3, 2) = B_tmp * cos(-2*pi*gamma);
+% % B(4:6, 2) = B_tmp * sin(-2*pi*gamma);
+% % B_tmp = [1; (6 - 6*gamma); (15 - 33*gamma + 18*gamma^2)];
+% % B(1:3, 3) = B_tmp * cos(-3*pi*gamma);
+% % B(4:6, 3) = B_tmp * sin(-3*pi*gamma);
+% % B_tmp = [1; (3 - 2*gamma); (3 - 5*gamma + 2*gamma^2)];
+% % B(1:3, 4) = B_tmp * cos(pi/2 - pi*gamma);
+% % B(4:6, 4) = B_tmp * sin(pi/2 - pi*gamma);
+% % B_tmp = [1; (5 - 4*gamma); (10 - 18*gamma + 8*gamma^2)];
+% % B(1:3, 5) = B_tmp * cos(pi/2 - 2*pi*gamma);
+% % B(4:6, 5) = B_tmp * sin(pi/2 - 2*pi*gamma);
+% % B_tmp = [1; (7 - 6*gamma); (21 - 39*gamma + 18*gamma^2)];
+% % B(1:3, 6) = B_tmp * cos(pi/2 - 3*pi*gamma);
+% % B(4:6, 6) = B_tmp * sin(pi/2 - 3*pi*gamma);
+% 
+% % left hand side = 1
+% B = zeros(8, 8);
+% B_tmp = [1; (-2*gamma); (gamma + 2*gamma^2); (-2/3*gamma - 2*gamma^2 - 4/3*gamma^3)];
+% B(1:4, 1) = B_tmp * cos(-pi*gamma);
+% B(5:8, 1) = B_tmp * sin(-pi*gamma);
+% B_tmp = [1; (2 - 4*gamma); (1 - 6*gamma + 8*gamma^2); (-4/3*gamma + 8*gamma^2 - 32/3*gamma^3)];
+% B(1:4, 2) = B_tmp * cos(-2*pi*gamma);
+% B(5:8, 2) = B_tmp * sin(-2*pi*gamma);
+% B_tmp = [1; (4 - 6*gamma); (6 - 21*gamma + 18*gamma^2); (4 - 26*gamma + 54*gamma^2 - 36*gamma^3)];
+% B(1:4, 3) = B_tmp * cos(-3*pi*gamma);
+% B(5:8, 3) = B_tmp * sin(-3*pi*gamma);
+% B_tmp = [1; (6 - 8*gamma); (15 - 44*gamma + 32*gamma^2); (20 - 296/3*gamma + 160*gamma^2 - 256/3*gamma^3)];
+% B(1:4, 4) = B_tmp * cos(-4*pi*gamma);
+% B(5:8, 4) = B_tmp * sin(-4*pi*gamma);
+% B_tmp = [1; (1 - 2*gamma); (-gamma + 2*gamma^2); (1/3*gamma - 4/3*gamma^3)];
+% B(1:4, 5) = B_tmp * cos(pi/2 - pi*gamma);
+% B(5:8, 5) = B_tmp * sin(pi/2 - pi*gamma);
+% B_tmp = [1; (3 - 4*gamma); (3 - 10*gamma + 8*gamma^2); (1 - 22/3*gamma + 16*gamma^2 - 32/3*gamma^3)];
+% B(1:4, 6) = B_tmp * cos(pi/2 - 2*pi*gamma);
+% B(5:8, 6) = B_tmp * sin(pi/2 - 2*pi*gamma);
+% B_tmp = [1; (5 - 6*gamma); (10 - 27*gamma + 18*gamma^2); (10 - 47*gamma + 72*gamma^2 - 36*gamma^3)];
+% B(1:4, 7) = B_tmp * cos(pi/2 - 3*pi*gamma);
+% B(5:8, 7) = B_tmp * sin(pi/2 - 3*pi*gamma);
+% B_tmp = [1; (7 - 8*gamma); (21 - 52*gamma + 32*gamma^2); (35 - 428/3*gamma + 192*gamma^2 - 256/3*gamma^3)];
+% B(1:4, 8) = B_tmp * cos(pi/2 - 4*pi*gamma);
+% B(5:8, 8) = B_tmp * sin(pi/2 - 4*pi*gamma);
+% 
+% % Check Taylor expansion
+% x = (w - w0) ./ w0;
+% x_vec = [ones(size(x)); x; x.^2; x.^3];
+% k1_te = (transpose(B(1:4, 1)) * x_vec + 1i * transpose(B(5:8, 1)) * x_vec) * w0^0 / (c^2);
+% k2_te = (transpose(B(1:4, 2)) * x_vec + 1i * transpose(B(5:8, 2)) * x_vec) * w0^2 / (c^4);
+% k3_te = (transpose(B(1:4, 3)) * x_vec + 1i * transpose(B(5:8, 3)) * x_vec) * w0^4 / (c^6);
+% k4_te = (transpose(B(1:4, 4)) * x_vec + 1i * transpose(B(5:8, 4)) * x_vec) * w0^6 / (c^8);
+% k5_te = (transpose(B(1:4, 5)) * x_vec + 1i * transpose(B(5:8, 5)) * x_vec) * w0^1 / (c^2);
+% k6_te = (transpose(B(1:4, 6)) * x_vec + 1i * transpose(B(5:8, 6)) * x_vec) * w0^3 / (c^4);
+% k7_te = (transpose(B(1:4, 7)) * x_vec + 1i * transpose(B(5:8, 7)) * x_vec) * w0^5 / (c^6);
+% k8_te = (transpose(B(1:4, 8)) * x_vec + 1i * transpose(B(5:8, 8)) * x_vec) * w0^7 / (c^8);
+% 
+% 
+% % Solve B * A = [1; 2; 1; 0; 0; 0; 0; 0] and assign k coefficients
+% % A = B \ [1; 2; 1; 0; 0; 0; 0; 0]; % left hand side = w^2
+% A = B \ [1; 0; 0; 0; 0; 0; 0; 0]; % left hand side = 1
+% 
+% C_k1 = A(1) * c^2 / (w0^0);
+% C_k2 = A(2) * c^4 / (w0^2);
+% C_k3 = A(3) * c^6 / (w0^4);
+% C_k4 = A(4) * c^8 / (w0^6);
+% C_k5 = A(5) * c^2 / (w0^1);
+% C_k6 = A(6) * c^4 / (w0^3);
+% C_k7 = A(7) * c^6 / (w0^5);
+% C_k8 = A(8) * c^8 / (w0^7);
+% 
+% C_k = [C_k1; C_k2; C_k3; C_k4; C_k5; C_k6; C_k7; C_k8];
+% 
+% % Plug in the k value to check the validation of taylor expansion
+% 
+% lhs = ones(size(x));
+% rhs = A(1) * (1+x).^(0-2*gamma) * exp(1i*(-pi*gamma)) + ...
+%       A(2) * (1+x).^(2-4*gamma) * exp(1i*(-2*pi*gamma)) + ...
+%       A(3) * (1+x).^(4-6*gamma) * exp(1i*(-3*pi*gamma)) + ...
+%       A(4) * (1+x).^(6-8*gamma) * exp(1i*(-4*pi*gamma)) + ...
+%       A(5) * (1+x).^(1-2*gamma) * exp(1i*(pi/2 - pi*gamma)) + ...
+%       A(6) * (1+x).^(3-4*gamma) * exp(1i*(pi/2 - 2*pi*gamma)) + ...
+%       A(7) * (1+x).^(5-6*gamma) * exp(1i*(pi/2 - 2*pi*gamma)) + ...
+%       A(8) * (1+x).^(7-8*gamma) * exp(1i*(pi/2 - 4*pi*gamma));
+% 
+% rhsa = zeros(6, length(x));
+% rhsa(1, :) = A(1) * (1+x).^(2-2*gamma) * exp(1i*(-pi*gamma));
+% rhsa(2, :) = A(2) * (1+x).^(4-4*gamma) * exp(1i*(-2*pi*gamma));
+% rhsa(3, :) = A(3) * (1+x).^(6-6*gamma) * exp(1i*(-3*pi*gamma));
+% rhsa(4, :) = A(4) * (1+x).^(3-2*gamma) * exp(1i*(pi/2 - pi*gamma));
+% rhsa(5, :) = A(5) * (1+x).^(5-4*gamma) * exp(1i*(pi/2 - 2*pi*gamma));
+% rhsa(6, :) = A(6) * (1+x).^(7-6*gamma) * exp(1i*(pi/2 - 3*pi*gamma));
+% 
+% w2_rhs = zeros(8, length(x));
+% w2_rhs(1, :) = C_k(1) * k.^2;
+% w2_rhs(2, :) = C_k(2) * k.^4;
+% w2_rhs(3, :) = C_k(3) * k.^6;
+% w2_rhs(4, :) = C_k(3) * k.^8;
+% w2_rhs(5, :) = C_k(4) * (1i*w) .* k.^2;
+% w2_rhs(6, :) = C_k(5) * (1i*w) .* k.^4;
+% w2_rhs(7, :) = C_k(6) * (1i*w) .* k.^6;
+% w2_rhs(8, :) = C_k(6) * (1i*w) .* k.^8;
+% w2_rhs = sum(w2_rhs);
+% 
+% % Solve the dispersion relation
+% k_sol = zeros(size(w));
+% for i = 1 : nf
+%     i
+%     w_i = w(i);
+%     lhs = w_i ^ 2;
+%     
+%     syms kk;
+%     eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^4 + C_k3 * kk^6 + + C_k4 * kk^8 + ...
+%         C_k5 * (1i*w_i) * kk^2 + C_k6 * (1i*w_i) * kk^4 + C_k7 * (1i*w_i) * kk^6 + C_k8 * (1i*w_i) * kk^8);
+% %     eqn = (lhs == C_k1 * kk + C_k2 * kk^2 + C_k3 * kk^3 + ...
+% %         C_k4 * (1i*w_i) * kk + C_k5 * (1i*w_i) * kk^2 + C_k3 * (1i*w_i) * kk^3);
+%     k_root = vpasolve(eqn, kk, k(i));
+%     k_root = double(k_root);
+%     [~, i_root] = min(abs(k_root - k(i)));
+% %     [~, i_root] = min(abs(k_root - k(i).^2));
+%     k_sol(i) = k_root(i_root);
+% %     k_sol(i) = sqrt(k_root(i_root));
+% end
+% cp_sol = w ./ real(k_sol);
+% alpha_sol = -imag(k_sol);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

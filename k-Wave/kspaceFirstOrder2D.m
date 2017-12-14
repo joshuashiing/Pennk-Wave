@@ -801,6 +801,17 @@ for t_index = index_start:index_step:index_end
                     absorb_tau .* real(ifft2(absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)))) - ...
                     absorb_eta .* real(ifft2(absorb_nabla2 .* fft2(rhox + rhoy))));
                 
+            case 'absorbing_TT17'
+                rho_fft = fft2(rhox + rhoy);
+                rho_xy = rhox + rhoy;
+                rho0_nablau = rho0 .* (duxdx + duydy);
+                rho0_nablau_fft = fft2(rho0_nablau);
+                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
+                    absorb_C_k2 .* rho_xy + ...
+                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
+                    absorb_C_k4 .* rho0_nablau;
+                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
+            
             case 'absorbing_DT17'
                 rho_fft = fft2(rhox + rhoy);
                 rho_xy = rhox + rhoy;
