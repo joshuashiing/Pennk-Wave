@@ -829,66 +829,20 @@ for t_index = index_start:index_step:index_end
                 rho_xy = rhox + rhoy;
                 rho0_nablau = rho0 .* (duxdx + duydy);
                 rho0_nablau_fft = fft2(rho0_nablau);
+                
                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
                     absorb_C_k2 .* rho_xy + ...
                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
                     absorb_C_k5 .* rho0_nablau - ...
                     absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_FT17'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-                    absorb_C_k5 .* rho0_nablau;
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TO17'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* rho0_nablau;
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TO18'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_MO18'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* rho_xy + ...
-                    absorb_C_k2 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-             case 'absorbing_MT18'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy - ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
+%                 medium.p_test(t_index) = p(64, 95);
+%                 medium.max_p_vec(t_index) = max(abs(p(:)));
+%                 if t_index > 2000
+%                     disp(t_index);
+%                 end
+%                 disp(t_index);
+%                 p = c.^2 .* rho_xy;
                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
                 
             

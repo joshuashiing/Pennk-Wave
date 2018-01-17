@@ -12,7 +12,7 @@ Date:           11/16/2017
 
 from sympy import *
 
-sol_file = 'A_sol.txt'  # Solution Output File
+# sol_file = 'A_sol_TO17.txt'  # Solution Output File
 
 
 def gen_B_mat(g):
@@ -76,7 +76,9 @@ def write_coef(c_A_sol, sol_file):
     return
 
 
-def main():
+def main_TF17():
+    # w^2 = c1 * k + c2 * k^2 + c3 * k^3 + c4 * (i*w) * k + c5 * (i*w) * k^2 + c6 * (i*w) * k^3
+    sol_file = 'A_sol_TF17.txt'   # Solution Output File
     g = symbols('gamma')    # Gamma
     A1, A2, A3, A4, A5, A6 = symbols('A1, A2, A3, A4, A5, A6')  # Coefficients
 
@@ -86,12 +88,110 @@ def main():
     RHS = B * c_A
     LHS = Matrix([1, 2, 1, 0, 0, 0])
 
-    # # Select a portion of the linear system to solve
-    # n = 2
-    # B = B[0:n, 0:n]
-    # c_A = c_A[0:n, 0]
-    # RHS = B * c_A
-    # LHS = LHS[0:n, 0]
+    # Solve the linear system
+    c_A_sol = solve(RHS - LHS, c_A)
+
+    # Write the output solution file
+    write_coef(c_A_sol, sol_file)
+    return
+
+
+def main_FT17():
+    # w^2 = c1 * k + c2 * k^2 + c3 * k^3 + c4 * (i*w) * k + c5 * (i*w) * k^2
+    sol_file = 'A_sol_FT17.txt'   # Solution Output File
+    g = symbols('gamma')    # Gamma
+    A1, A2, A3, A4, A5 = symbols('A1, A2, A3, A4, A5')  # Coefficients
+
+    # Assemble the linear system
+    B0 = gen_B_mat(g)
+    B = B0[:, 0:5]
+    c_A = Matrix([A1, A2, A3, A4, A5])
+    RHS = B.transpose() * B * c_A
+    LHS = B.transpose() * Matrix([1, 2, 1, 0, 0, 0])
+
+    # Solve the linear system
+    c_A_sol = solve(RHS - LHS, c_A)
+
+    # Write the output solution file
+    write_coef(c_A_sol, sol_file)
+    return
+
+
+def main_TO17():
+    # w^2 = c1 * k + c2 * k^2 + c3 * k^3 + c4 * (i*w) * k^2
+    sol_file = 'A_sol_TO17.txt'  # Solution Output File
+    g = symbols('gamma')    # Gamma
+    A1, A2, A3, A4 = symbols('A1, A2, A3, A4')  # Coefficients
+
+    # Assemble the linear system
+    B0 = gen_B_mat(g)
+    B = B0[:, [0, 1, 2, 4]]
+    c_A = Matrix([A1, A2, A3, A4])
+    RHS = B.transpose() * B * c_A
+    LHS = B.transpose() * Matrix([1, 2, 1, 0, 0, 0])
+
+    # Solve the linear system
+    c_A_sol = solve(RHS - LHS, c_A)
+
+    # Write the output solution file
+    write_coef(c_A_sol, sol_file)
+    return
+
+
+def main_TO18():
+    # w^2 = c1 * k + c2 * k^2 + c3 * k^3 + c4 * (i*w) * k
+    sol_file = 'A_sol_TO18.txt'  # Solution Output File
+    g = symbols('gamma')    # Gamma
+    A1, A2, A3, A4 = symbols('A1, A2, A3, A4')  # Coefficients
+
+    # Assemble the linear system
+    B0 = gen_B_mat(g)
+    B = B0[:, 0:4]
+    c_A = Matrix([A1, A2, A3, A4])
+    RHS = B.transpose() * B * c_A
+    LHS = B.transpose() * Matrix([1, 2, 1, 0, 0, 0])
+
+    # Solve the linear system
+    c_A_sol = solve(RHS - LHS, c_A)
+
+    # Write the output solution file
+    write_coef(c_A_sol, sol_file)
+    return
+
+
+def main_MO18():
+    # w^2 = c1 * k^2 + c2 * k^3 + c3 * (i*w) * k
+    sol_file = 'A_sol_MO18.txt'  # Solution Output File
+    g = symbols('gamma')    # Gamma
+    A1, A2, A3 = symbols('A1, A2, A3')  # Coefficients
+
+    # Assemble the linear system
+    B0 = gen_B_mat(g)
+    B = B0[:, [1, 2, 3]]
+    c_A = Matrix([A1, A2, A3])
+    RHS = B.transpose() * B * c_A
+    LHS = B.transpose() * Matrix([1, 2, 1, 0, 0, 0])
+
+    # Solve the linear system
+    c_A_sol = solve(RHS - LHS, c_A)
+
+    # Write the output solution file
+    write_coef(c_A_sol, sol_file)
+    return
+
+
+def main_MT18():
+    # w^2 = c1 * k^2 + c2 * k^3 + c3 * (i*w) * k^2
+    sol_file = 'A_sol_MT18.txt'  # Solution Output File
+    g = symbols('gamma')    # Gamma
+    A1, A2, A3 = symbols('A1, A2, A3')  # Coefficients
+
+    # Assemble the linear system
+    B0 = gen_B_mat(g)
+    B = B0[:, [0, 1, 3]]
+    c_A = Matrix([A1, A2, A3])
+    RHS = B.transpose() * B * c_A
+    LHS = B.transpose() * Matrix([1, 2, 1, 0, 0, 0])
 
     # Solve the linear system
     c_A_sol = solve(RHS - LHS, c_A)
@@ -102,4 +202,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main_FT17()

@@ -450,6 +450,7 @@ def coef_train_v02(gamma, w0, c, cfg, if_plot=False, message_step=1000):
     A3_init = gamma + 3 * gamma ** 2
     A4_init = np.pi * gamma
 
+
     x = tf.placeholder(dtype=tf.float64)
     k = tf.placeholder(dtype=tf.complex128)
     A1 = tf.Variable(A1_init, dtype=tf.float64)
@@ -808,23 +809,24 @@ def main():
 
     # Hyper-Parmaeters
     cfg = LearnCfg()
-    cfg.init_lr = 1e-7
+    cfg.init_lr = 1e-6
     cfg.decay_step = 100
     cfg.decay_rate = 1. - 1e-3
-    cfg.n_epoch = 10000
+    cfg.n_epoch = 20000
     cfg.n_x = 101
-    cfg.n_x0 = 3
+    # cfg.n_x0 = 3
     cfg.lambda_ri = 1.
-    cfg.cutoff_perc = 16.
+    # cfg.cutoff_perc = 16.
+    cfg.cutoff_perc = 5.
 
     # coef_train_v01(gamma, w0, c, n_x, lambda_ri, cutoff_perc, lr, n_epoch, if_plot=True)
     # coef_train_v02(gamma, w0, c, n_x, lambda_ri, cutoff_perc, lr, n_epoch, if_plot=True)
     # coef_train_v03(gamma, w0, c, cfg, if_plot=True)
-    # coef_train_v02(gamma, w0, c, cfg, if_plot=True)
+    coef_train_v02(gamma, w0, c, cfg, if_plot=True)
     # coef_train_v03(gamma, w0, c, cfg, if_plot=True)
 
     # Loop over gamma list
-    gamma_loop = True
+    gamma_loop = False
     if gamma_loop:
         n_gamma = 10
         Q1, Q2 = 10., 100.
