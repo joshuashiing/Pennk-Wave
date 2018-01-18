@@ -266,13 +266,13 @@ elseif strcmp(equation_of_state, 'absorbing_MT18')
     c = c0 .* cos(pi * gamma / 2);
     w0 = medium.f0 * 2 * pi;
 
-    absorb_C_k1 = -3 * gamma .* c .* w0;
-    absorb_C_k2 = ones(size(gamma)) .* c.^2;
-    absorb_C_k3 = pi * gamma .* c;
+%     absorb_C_k1 = -3 * gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = pi * gamma .* c;
     
-%     absorb_C_k1 = (-3 * gamma - 23/6 * gamma.^2) .* c .* w0;
-%     absorb_C_k2 = (1 + 8/3 * gamma) .* c.^2;
-%     absorb_C_k3 = (pi * gamma + 4/3 * pi * gamma.^2) .* c;
+    absorb_C_k1 = (-3 * gamma - 23/6 * gamma.^2) .* c .* w0;
+    absorb_C_k2 = (1 + 8/3 * gamma) .* c.^2;
+    absorb_C_k3 = (pi * gamma + 4/3 * pi * gamma.^2) .* c;
     
     absorb_nabla1 = (kgrid.k) .^ (-1);
     absorb_nabla1(isinf(absorb_nabla1)) = 0;

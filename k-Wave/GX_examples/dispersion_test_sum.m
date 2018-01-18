@@ -318,60 +318,60 @@ alpha = w ./ cp * tan(pi * gamma / 2);
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Taylor-Fitting (MO18)
-% w^2 = c1 * k^2 + c2 * k^3 + c3 * (i*w) * k
-
-mod_mech = 'MO18';
-
-% Generate the B matrix
-B = zeros(6, 3);
-B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
-B(1:3, 1) = B_tmp * cos(-pi*gamma);
-B(4:6, 1) = B_tmp * sin(-pi*gamma);
-B_tmp = [1; (3 - 3*gamma); (3 - 15/2*gamma + 9/2*gamma^2)];
-B(1:3, 2) = B_tmp * cos(-3/2*pi*gamma);
-B(4:6, 2) = B_tmp * sin(-3/2*pi*gamma);
-B_tmp = [1; (2 - gamma); (1 - 3/2*gamma + 1/2*gamma^2)];
-B(1:3, 3) = B_tmp * cos(pi/2 - pi*gamma/2);
-B(4:6, 3) = B_tmp * sin(pi/2 - pi*gamma/2);
-
-% Solve Linear System
-A = (B' * B) \ (B' * [1; 2; 1; 0; 0; 0]);
-
-% mod_mech = 'DT-MO18';
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Taylor-Fitting (MO18)
+% % w^2 = c1 * k^2 + c2 * k^3 + c3 * (i*w) * k
+% 
+% mod_mech = 'MO18';
+% 
+% % Generate the B matrix
+% B = zeros(6, 3);
+% B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
+% B(1:3, 1) = B_tmp * cos(-pi*gamma);
+% B(4:6, 1) = B_tmp * sin(-pi*gamma);
+% B_tmp = [1; (3 - 3*gamma); (3 - 15/2*gamma + 9/2*gamma^2)];
+% B(1:3, 2) = B_tmp * cos(-3/2*pi*gamma);
+% B(4:6, 2) = B_tmp * sin(-3/2*pi*gamma);
+% B_tmp = [1; (2 - gamma); (1 - 3/2*gamma + 1/2*gamma^2)];
+% B(1:3, 3) = B_tmp * cos(pi/2 - pi*gamma/2);
+% B(4:6, 3) = B_tmp * sin(pi/2 - pi*gamma/2);
+% 
+% % Solve Linear System
+% A = (B' * B) \ (B' * [1; 2; 1; 0; 0; 0]);
+% 
+% % mod_mech = 'DT-MO18';
+% % clear A
+% % A(1) = 1.0;
+% % A(2) = 10/7 * gamma;
+% % A(3) = pi * gamma;
+% 
+% mod_mech = 'DT2-MO18';
 % clear A
-% A(1) = 1.0;
-% A(2) = 10/7 * gamma;
-% A(3) = pi * gamma;
-
-mod_mech = 'DT2-MO18';
-clear A
-A(1) = 1.0 - 17/14 * gamma;
-A(2) = 10/7 * gamma + 101/37 * gamma^2;
-A(3) = pi * gamma + 39/7 * gamma^2;
-
-
-C_k1 = A(1) * c^2;
-C_k2 = A(2) * c^3 / w0;
-C_k3 = A(3) * c;
-
-% Solve the dispersion relation
-k_sol = zeros(size(w));
-for i = 1 : nf
-    i
-    w_i = w(i);
-    lhs = w_i ^ 2;
-    
-    syms kk;
-    eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^3 + C_k3 * (1i*w_i) * kk);
-    k_root = vpasolve(eqn, kk, k(i));
-    k_root = double(k_root);
-    [~, i_root] = min(abs(k_root - k(i)));
-    k_sol(i) = k_root(i_root);
-end
-cp_sol = w ./ real(k_sol);
-alpha_sol = -imag(k_sol);
+% A(1) = 1.0 - 17/14 * gamma;
+% A(2) = 10/7 * gamma + 101/37 * gamma^2;
+% A(3) = pi * gamma + 39/7 * gamma^2;
+% 
+% 
+% C_k1 = A(1) * c^2;
+% C_k2 = A(2) * c^3 / w0;
+% C_k3 = A(3) * c;
+% 
+% % Solve the dispersion relation
+% k_sol = zeros(size(w));
+% for i = 1 : nf
+%     i
+%     w_i = w(i);
+%     lhs = w_i ^ 2;
+%     
+%     syms kk;
+%     eqn = (lhs == C_k1 * kk^2 + C_k2 * kk^3 + C_k3 * (1i*w_i) * kk);
+%     k_root = vpasolve(eqn, kk, k(i));
+%     k_root = double(k_root);
+%     [~, i_root] = min(abs(k_root - k(i)));
+%     k_sol(i) = k_root(i_root);
+% end
+% cp_sol = w ./ real(k_sol);
+% alpha_sol = -imag(k_sol);
 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -428,6 +428,59 @@ alpha_sol = -imag(k_sol);
 % cp_sol = w ./ real(k_sol);
 % alpha_sol = -imag(k_sol);
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Taylor-Fitting (FN18)
+% w^2 = c1 * k^2 + c2 * k^3 + c3 * (i*w) * k
+
+mod_mech = 'FN18';
+
+% Generate the B matrix
+B = zeros(6, 2);
+
+B_tmp = [1; (2 - 2*gamma); (1 - 3*gamma + 2*gamma^2)];
+B(1:3, 1) = B_tmp * cos(-pi*gamma);
+B(4:6, 1) = B_tmp * sin(-pi*gamma);
+B_tmp = [1; (2 - gamma); (1 - 3/2*gamma + 1/2*gamma^2)];
+B(1:3, 2) = B_tmp * cos(pi/2 - pi*gamma/2);
+B(4:6, 2) = B_tmp * sin(pi/2 - pi*gamma/2);
+
+
+% Solve Linear System
+A = (B' * B) \ (B' * [1; 2; 1; 0; 0; 0]);
+
+% mod_mech = 'DT-FN18';
+% clear A
+% A(1) = 1.0;
+% A(2) = 10/7 * gamma;
+% A(3) = pi * gamma;
+
+% mod_mech = 'DT2-FN18';
+% clear A
+% A(1) = 1.0 - 17/14 * gamma;
+% A(2) = 10/7 * gamma + 101/37 * gamma^2;
+% A(3) = pi * gamma + 39/7 * gamma^2;
+
+
+C_k1 = A(1) * c^2;
+C_k2 = A(2) * c;
+
+% Solve the dispersion relation
+k_sol = zeros(size(w));
+for i = 1 : nf
+    i
+    w_i = w(i);
+    lhs = w_i ^ 2;
+    
+    syms kk;
+    eqn = (lhs == C_k1 * kk^2 + C_k2 * (1i*w_i) * kk);
+    k_root = vpasolve(eqn, kk, k(i));
+    k_root = double(k_root);
+    [~, i_root] = min(abs(k_root - k(i)));
+    k_sol(i) = k_root(i_root);
+end
+cp_sol = w ./ real(k_sol);
+alpha_sol = -imag(k_sol);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
