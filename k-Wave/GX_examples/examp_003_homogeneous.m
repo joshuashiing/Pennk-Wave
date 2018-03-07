@@ -93,7 +93,7 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'TF17';
+medium.mod_mech = 'FT17';
 
 d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 d3 = d3 * 4;
