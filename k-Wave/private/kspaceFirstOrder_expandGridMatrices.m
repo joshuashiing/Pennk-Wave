@@ -141,6 +141,20 @@ if isfield(medium, 'BonA') && numel(medium.BonA) > 1
     medium.BonA = expandMatrix(medium.BonA, expand_size);
 end
 
+% GXTEST
+if isfield(medium, 'f0') && numel(medium.f0) > 1
+    medium.f0 = expandMatrix(medium.f0, expand_size);
+end
+
+if isfield(medium, 'c0') && numel(medium.c0) > 1
+    medium.c0 = expandMatrix(medium.c0, expand_size);
+end
+
+if isfield(medium, 'Q') && numel(medium.Q) > 1
+    medium.Q = expandMatrix(medium.Q, expand_size);
+end
+% GXTEST
+
 % enlarge the display mask if given
 if ~(strcmp(display_mask, 'default') || strcmp(display_mask, 'off'))
     display_mask = expandMatrix(display_mask, expand_size, 0);
