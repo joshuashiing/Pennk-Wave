@@ -198,27 +198,49 @@ if isfield(medium, 'alpha_coeff') || isfield(medium, 'alpha_power')
     end
 % GXTEST
 elseif isfield(medium, 'mod_mech')
-    if medium.mod_mech == 'TZ14'
+    if strcmp(medium.mod_mech, 'lossless')
+        equation_of_state = 'lossless';
+    elseif strcmp(medium.mod_mech, 'TZ14')
         equation_of_state = 'absorbing_TZ14';
-    elseif medium.mod_mech == 'TZ17'
+    elseif strcmp(medium.mod_mech, 'TZ17')
         equation_of_state = 'absorbing_TZ17';
-    elseif medium.mod_mech == 'TF17'
-        equation_of_state = 'absorbing_TF17';
-    elseif medium.mod_mech == 'FT17'
-        equation_of_state = 'absorbing_FT17';
-    elseif medium.mod_mech == 'TO17'
-        equation_of_state = 'absorbing_TO17';
-    elseif medium.mod_mech == 'TO18'
-        equation_of_state = 'absorbing_TO18';
-    elseif medium.mod_mech == 'MO18'
-        equation_of_state = 'absorbing_MO18';
-    elseif medium.mod_mech == 'MT18'
-        equation_of_state = 'absorbing_MT18';
-    elseif medium.mod_mech == 'DT17'
-        equation_of_state = 'absorbing_DT17';
-    elseif medium.mod_mech == 'TT17'
-        equation_of_state = 'absorbing_TT17';
+    elseif strcmp(medium.mod_mech, 'TF111111')
+        equation_of_state = 'absorbing_TF111111';
+    elseif strcmp(medium.mod_mech, 'TF111110')
+        equation_of_state = 'absorbing_TF111110';
+    elseif strcmp(medium.mod_mech, 'TF111100')
+        equation_of_state = 'absorbing_TF111100';
+    elseif strcmp(medium.mod_mech, 'TF011100')
+        equation_of_state = 'absorbing_TF011100';
+    elseif strcmp(medium.mod_mech, 'TF110100')
+        equation_of_state = 'absorbing_TF110100';
+    elseif strcmp(medium.mod_mech, 'TF111110_ld')
+        equation_of_state = 'absorbing_TF111110_ld';
+    elseif strcmp(medium.mod_mech, 'TF111110_dd')
+        equation_of_state = 'absorbing_TF111110_dd';
     end
+% elseif isfield(medium, 'mod_mech')
+%     if medium.mod_mech == 'TZ14'
+%         equation_of_state = 'absorbing_TZ14';
+%     elseif medium.mod_mech == 'TZ17'
+%         equation_of_state = 'absorbing_TZ17';
+%     elseif medium.mod_mech == 'TF17'
+%         equation_of_state = 'absorbing_TF17';
+%     elseif medium.mod_mech == 'FT17'
+%         equation_of_state = 'absorbing_FT17';
+%     elseif medium.mod_mech == 'TO17'
+%         equation_of_state = 'absorbing_TO17';
+%     elseif medium.mod_mech == 'TO18'
+%         equation_of_state = 'absorbing_TO18';
+%     elseif medium.mod_mech == 'MO18'
+%         equation_of_state = 'absorbing_MO18';
+%     elseif medium.mod_mech == 'MT18'
+%         equation_of_state = 'absorbing_MT18';
+%     elseif medium.mod_mech == 'DT17'
+%         equation_of_state = 'absorbing_DT17';
+%     elseif medium.mod_mech == 'TT17'
+%         equation_of_state = 'absorbing_TT17';
+%     end
 % GXTEST
     
 else
@@ -308,8 +330,12 @@ if ~isempty(sensor)
         if kgrid.dim == 2
 
             % check field names including the directivity inputs
+            % GXTEST
+%             checkFieldNames(sensor, {'mask', 'directivity_pattern', 'directivity_angle', 'directivity_size',...
+%                 'time_reversal_boundary_data', 'frequency_response', 'record_mode', 'record', 'record_start_index'});
             checkFieldNames(sensor, {'mask', 'directivity_pattern', 'directivity_angle', 'directivity_size',...
-                'time_reversal_boundary_data', 'frequency_response', 'record_mode', 'record', 'record_start_index'});
+                'time_reversal_boundary_data', 'frequency_response', 'record_mode', 'record', 'record_start_index', 't_snap', 'snap_name'});
+            % GXTEST
 
             % check for sensor directivity input and set flag
             if isfield(sensor, 'directivity_angle')
@@ -1587,14 +1613,23 @@ if elastic_code
 % GXTEST
 elseif ~strcmp(equation_of_state, 'absorbing_TZ14') && ...
         ~strcmp(equation_of_state, 'absorbing_TZ17') && ...
-        ~strcmp(equation_of_state, 'absorbing_TF17') && ...
-        ~strcmp(equation_of_state, 'absorbing_FT17') && ...
-        ~strcmp(equation_of_state, 'absorbing_TO17') && ...
-        ~strcmp(equation_of_state, 'absorbing_TO18') && ...
-        ~strcmp(equation_of_state, 'absorbing_MO18') && ...
-        ~strcmp(equation_of_state, 'absorbing_MT18') && ...
-        ~strcmp(equation_of_state, 'absorbing_DT17') && ...
-        ~strcmp(equation_of_state, 'absorbing_TT17')
+        ~strcmp(equation_of_state, 'absorbing_TF111111') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF111110') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF111100') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF011100') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF110100') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF111110_ld') && ...
+        ~strcmp(equation_of_state, 'absorbing_TF111110_dd')
+% elseif ~strcmp(equation_of_state, 'absorbing_TZ14') && ...
+%         ~strcmp(equation_of_state, 'absorbing_TZ17') && ...
+%         ~strcmp(equation_of_state, 'absorbing_TF17') && ...
+%         ~strcmp(equation_of_state, 'absorbing_FT17') && ...
+%         ~strcmp(equation_of_state, 'absorbing_TO17') && ...
+%         ~strcmp(equation_of_state, 'absorbing_TO18') && ...
+%         ~strcmp(equation_of_state, 'absorbing_MO18') && ...
+%         ~strcmp(equation_of_state, 'absorbing_MT18') && ...
+%         ~strcmp(equation_of_state, 'absorbing_DT17') && ...
+%         ~strcmp(equation_of_state, 'absorbing_TT17')
         
 % else
 % GXTEST

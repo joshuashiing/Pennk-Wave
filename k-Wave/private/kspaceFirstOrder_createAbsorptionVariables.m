@@ -126,29 +126,7 @@ elseif strcmp(equation_of_state, 'absorbing_TZ17')
     absorb_nabla2 = ifftshift(absorb_nabla2);
     clear c0 w0 gamma
     
-elseif strcmp(equation_of_state, 'absorbing_TT17')
-    % Calculate media parameter matrices
-    gamma = atan(1 ./ medium.Q) / pi;
-    c0 = medium.sound_speed;
-    c = c0 .* cos(pi * gamma / 2);
-    w0 = medium.f0 * 2 * pi;
-    
-    absorb_C_k1 = -gamma .* c .* w0;
-    absorb_C_k2 = ones(size(gamma)) .* c.^2;
-    absorb_C_k3 = gamma .* c.^3 ./ w0;
-    absorb_C_k4 = pi * gamma .* c.^2 ./ w0;
-    
-    absorb_nabla1 = (kgrid.k) .^ (-1);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = kgrid.k;
-    absorb_nabla2(isinf(absorb_nabla2)) = 0;
-    absorb_nabla2 = ifftshift(absorb_nabla2);
-    
-    clear c0 w0 gamma
-    
-    
-elseif strcmp(equation_of_state, 'absorbing_TF17')
+elseif strcmp(equation_of_state, 'absorbing_TF111111')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
     c0 = medium.sound_speed;
@@ -170,8 +148,8 @@ elseif strcmp(equation_of_state, 'absorbing_TF17')
     absorb_nabla2 = ifftshift(absorb_nabla2);
     
     clear c0 w0 gamma
-
-elseif strcmp(equation_of_state, 'absorbing_FT17')
+    
+elseif strcmp(equation_of_state, 'absorbing_TF111110')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
     c0 = medium.sound_speed;
@@ -193,28 +171,7 @@ elseif strcmp(equation_of_state, 'absorbing_FT17')
     
     clear c0 w0 gamma
     
-elseif strcmp(equation_of_state, 'absorbing_TO17')
-    % Calculate media parameter matrices
-    gamma = atan(1 ./ medium.Q) / pi;
-    c0 = medium.sound_speed;
-    c = c0 .* cos(pi * gamma / 2);
-    w0 = medium.f0 * 2 * pi;
-
-    absorb_C_k1 = -gamma .* c .* w0;
-    absorb_C_k2 = ones(size(gamma)) .* c.^2;
-    absorb_C_k3 = gamma .* c.^3 ./ w0;
-    absorb_C_k4 = 1.65346981767884 * gamma .* c;
-    
-    absorb_nabla1 = (kgrid.k) .^ (-1);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = kgrid.k;
-    absorb_nabla2(isinf(absorb_nabla2)) = 0;
-    absorb_nabla2 = ifftshift(absorb_nabla2);
-    
-    clear c0 w0 gamma
-    
-elseif strcmp(equation_of_state, 'absorbing_TO18')
+elseif strcmp(equation_of_state, 'absorbing_TF111100')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
     c0 = medium.sound_speed;
@@ -234,21 +191,17 @@ elseif strcmp(equation_of_state, 'absorbing_TO18')
     absorb_nabla2 = ifftshift(absorb_nabla2);
     
     clear c0 w0 gamma
-  
-elseif strcmp(equation_of_state, 'absorbing_MO18')
+    
+elseif strcmp(equation_of_state, 'absorbing_TF011100')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
     c0 = medium.sound_speed;
     c = c0 .* cos(pi * gamma / 2);
     w0 = medium.f0 * 2 * pi;
 
-%     absorb_C_k1 = ones(size(gamma)) .* c.^2;
-%     absorb_C_k2 = 10/7 * gamma .* c.^3 ./ w0;
-%     absorb_C_k3 = pi * gamma .* c;
-    
-    absorb_C_k1 = (1 - 17/14 * gamma) .* c.^2;
-    absorb_C_k2 = (10/7 * gamma + 101/37 * gamma.^2) .* c.^3 ./ w0;
-    absorb_C_k3 = (pi * gamma + 39/7 * gamma.^2) .* c;
+    absorb_C_k2 = (1 - 17/14 * gamma) .* c.^2;
+    absorb_C_k3 = (10/7 * gamma + 101/37 * gamma.^2) .* c.^3 ./ w0;
+    absorb_C_k4 = (pi * gamma + 39/7 * gamma.^2) .* c;
     
     absorb_nabla1 = (kgrid.k) .^ (-1);
     absorb_nabla1(isinf(absorb_nabla1)) = 0;
@@ -259,29 +212,219 @@ elseif strcmp(equation_of_state, 'absorbing_MO18')
     
     clear c0 w0 gamma
     
-elseif strcmp(equation_of_state, 'absorbing_MT18')
+elseif strcmp(equation_of_state, 'absorbing_TF110100')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;
     c0 = medium.sound_speed;
     c = c0 .* cos(pi * gamma / 2);
     w0 = medium.f0 * 2 * pi;
 
-    absorb_C_k1 = -3 * gamma .* c .* w0;
-    absorb_C_k2 = ones(size(gamma)) .* c.^2;
-    absorb_C_k3 = pi * gamma .* c;
+    absorb_C_k1 = -(3 * gamma + 23/6 * gamma.^2) .* c .* w0;
+    absorb_C_k2 = (1 + 8/3 * gamma) .* c.^2;
+    absorb_C_k4 = (pi * gamma + 4/3 * pi * gamma.^2) .* c;
     
+    absorb_nabla1 = (kgrid.k) .^ (-1);
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
+    absorb_nabla1 = ifftshift(absorb_nabla1);
+    absorb_nabla2 = kgrid.k;
+    absorb_nabla2(isinf(absorb_nabla2)) = 0;
+    absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    clear c0 w0 gamma
+
+elseif strcmp(equation_of_state, 'absorbing_TF111110_ld')
+    % Calculate media parameter matrices
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+
+    absorb_C_k2 = ones(size(gamma)) .* c.^2;
+    absorb_C_k4 = pi * gamma .* c;
+    absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+    
+    absorb_nabla1 = (kgrid.k) .^ (-1);
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
+    absorb_nabla1 = ifftshift(absorb_nabla1);
+    
+    clear c0 w0 gamma
+    
+elseif strcmp(equation_of_state, 'absorbing_TF111110_dd')
+    % Calculate media parameter matrices
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+
+    absorb_C_k1 = -gamma .* c .* w0;
+    absorb_C_k2 = ones(size(gamma)) .* c.^2;
+    absorb_C_k3 = gamma .* c.^3 ./ w0;
+    
+    absorb_nabla1 = (kgrid.k) .^ (-1);
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
+    absorb_nabla1 = ifftshift(absorb_nabla1);
+    absorb_nabla2 = kgrid.k;
+    absorb_nabla2(isinf(absorb_nabla2)) = 0;
+    absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    
+    
+% elseif strcmp(equation_of_state, 'absorbing_TT17')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+%     
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c.^2 ./ w0;
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+    
+    
+% elseif strcmp(equation_of_state, 'absorbing_TF17')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c;
+%     absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+%     absorb_C_k6 = -3/2 * pi * gamma.^4 .* c.^3 ./ (w0.^2);
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+
+% elseif strcmp(equation_of_state, 'absorbing_FT17')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c;
+%     absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+%     
+% elseif strcmp(equation_of_state, 'absorbing_TO17')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = 1.65346981767884 * gamma .* c;
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+%     
+% elseif strcmp(equation_of_state, 'absorbing_TO18')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c;
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+%   
+% elseif strcmp(equation_of_state, 'absorbing_MO18')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+% %     absorb_C_k1 = ones(size(gamma)) .* c.^2;
+% %     absorb_C_k2 = 10/7 * gamma .* c.^3 ./ w0;
+% %     absorb_C_k3 = pi * gamma .* c;
+%     
+%     absorb_C_k1 = (1 - 17/14 * gamma) .* c.^2;
+%     absorb_C_k2 = (10/7 * gamma + 101/37 * gamma.^2) .* c.^3 ./ w0;
+%     absorb_C_k3 = (pi * gamma + 39/7 * gamma.^2) .* c;
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
+%     
+% elseif strcmp(equation_of_state, 'absorbing_MT18')
+%     % Calculate media parameter matrices
+%     gamma = atan(1 ./ medium.Q) / pi;
+%     c0 = medium.sound_speed;
+%     c = c0 .* cos(pi * gamma / 2);
+%     w0 = medium.f0 * 2 * pi;
+% 
+% %     absorb_C_k1 = -3 * gamma .* c .* w0;
+% %     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+% %     absorb_C_k3 = pi * gamma .* c;
+%     
 %     absorb_C_k1 = (-3 * gamma - 23/6 * gamma.^2) .* c .* w0;
 %     absorb_C_k2 = (1 + 8/3 * gamma) .* c.^2;
 %     absorb_C_k3 = (pi * gamma + 4/3 * pi * gamma.^2) .* c;
-    
-    absorb_nabla1 = (kgrid.k) .^ (-1);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = kgrid.k;
-    absorb_nabla2(isinf(absorb_nabla2)) = 0;
-    absorb_nabla2 = ifftshift(absorb_nabla2);
-    
-    clear c0 w0 gamma
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+%     
+%     clear c0 w0 gamma
     
 % elseif strcmp(equation_of_state, 'absorbing_TF17')
 %     % Calculate media parameter matrices

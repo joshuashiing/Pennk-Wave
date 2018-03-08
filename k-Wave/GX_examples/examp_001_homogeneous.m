@@ -92,7 +92,7 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'MT18';
+medium.mod_mech = 'TF111111';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
 

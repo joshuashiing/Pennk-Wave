@@ -16,6 +16,3 @@ for i = 1 : n
     x(i) = xi;
     y(i) = yi;
 end
-
-% [x, nx] = min(abs(kgrid.x_vec - x0));
-% [y, ny] = min(abs(kgrid.y_vec - y0));

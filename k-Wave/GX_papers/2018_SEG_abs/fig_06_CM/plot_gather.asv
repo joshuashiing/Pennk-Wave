@@ -1,0 +1,3 @@
+function plot_gather(t_axis, d, h, clim, figureid, subid)
+offset_axis = size(d, 1);
+imagesc(
