@@ -32,16 +32,17 @@ dp = p2 - p3;
 plot_model_snap(c, dp, n_PML, h, scale, clim, 2, 414);
 plot_gather(t_axis, d2 - d3, h, plim, 3, 224);
 
-irec = 241; % 3000 m / 512.5m
+% irec = 241; % 3000 m / 512.5m
+irec = 281; % 3500 m / 1012.5m
 
 figure(4);
 subplot(211);
 plot(t_axis, d1(irec, :), 'k', 'linewidth', 2); hold on;
 plot(t_axis, d2(irec, :), 'r--', 'linewidth', 2);
-xlim([0.6 2]);
+xlim([0.9 2]);
 
 subplot(212);
 plot(t_axis, d3(irec, :), 'k', 'linewidth', 2); hold on;
 plot(t_axis, d2(irec, :), 'r--', 'linewidth', 2);
 plot(t_axis, d2(irec, :) - d3(irec, :), 'b:', 'linewidth', 1);
-xlim([0.6 2]);
+xlim([0.9 2]);
