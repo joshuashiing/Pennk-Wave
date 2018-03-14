@@ -24,16 +24,16 @@ density = 2200;     % Density [kg/m^3]
 % =========================================================================
 
 f_rw_c = 100;       % Center frequency of ricker wavelet [Hz]
-x_src = 0.0;          % Source location in the x direction [m]
-y_src = -200.0;       % Source location in the y direction [m]
-x_rec = 0.0;          % Receiver location in the x direction [m]
-y_rec = 200.0;        % Receiver location in the y direction [m]
+x_src = 0.0;          % Source location in the x direction [m] (64m)
+y_src = -200.0;       % Source location in the y direction [m] (56m)
+x_rec = 0.0;          % Receiver location in the x direction [m] (64m)
+y_rec = 200.0;        % Receiver location in the y direction [m] (456m)
 
 % =========================================================================
 % Simulation Parameters
 % =========================================================================
 
-dt = 5e-5;        % Time interval [s]
+dt = 5e-5;        % Time interval [s] (0.05 ms)
 t_max = 0.40;        % Simulation end time [s]
 f0 = 100;           % Reference frequency for simulation
 mod_mech = 'TF111110';  % Numerical modeling mechanism
