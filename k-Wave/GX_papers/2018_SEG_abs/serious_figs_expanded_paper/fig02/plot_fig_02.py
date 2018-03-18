@@ -1,6 +1,9 @@
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 
 def main():
@@ -80,63 +83,66 @@ def main():
     lw2 = 1
     nf_sd = 30
 
+    color1 = np.array([100., 169., 226.]) / 255.
+    color2 = np.array([211., 35., 38.]) / 255.
+    color3 = np.array([112., 112., 112.]) / 255.
+    color_grid = np.array([220., 220., 220.]) / 255.
+    alpha = 0.7
+
+
     ########### Case A | Phase velocity
 
     fig = plt.figure(1, figsize=(10, 4))
     ax1 = fig.add_axes((.08, .4, .4, .55))
     ax1.xaxis.set_ticks_position('none')
     ax1.set_xticklabels([])
-    ax1.grid(linestyle='--', linewidth=1)
+    ax1.grid(linestyle='--', linewidth=1, color=color_grid)
     ax1.set_xlim(10, 60)
-    plt.plot(f_a, cpt_a_1 / 1000, 'b', linewidth=lw1, label='Theoretical')
-    plt.plot(f_a, cpa_a_1 / 1000, 'r--', linewidth=lw1, label='Approximation')
-    plt.plot(f_a, cpt_a_2 / 1000, 'b', linewidth=lw1)
-    plt.plot(f_a, cpa_a_2 / 1000, 'r--', linewidth=lw1)
-    plt.plot(f_a, cpt_a_3 / 1000, 'b', linewidth=lw1)
-    plt.plot(f_a, cpa_a_3 / 1000, 'r--', linewidth=lw1)
+    plt.plot(f_a, cpt_a_1 / 1000, color=color1, linewidth=lw1, label='Theoretical')
+    plt.plot(f_a, cpa_a_1 / 1000, '--', color=color2, linewidth=lw1, label='Approximation')
+    plt.plot(f_a, cpt_a_2 / 1000, color=color1, linewidth=lw1)
+    plt.plot(f_a, cpa_a_2 / 1000, '--', color=color2, linewidth=lw1)
+    plt.plot(f_a, cpt_a_3 / 1000, color=color1, linewidth=lw1)
+    plt.plot(f_a, cpa_a_3 / 1000, '--', color=color2, linewidth=lw1)
     plt.ylabel('Velocity (km/s)')
-    plt.grid(True)
-    legend = ax1.legend(loc='lower right', shadow=True)
+    legend = ax1.legend(loc='lower right', shadow=False)
     plt.text(16, 2.02, r'$Q=10$', fontsize=11)
     plt.text(14, 2.103, r'$Q=32$', fontsize=11)
     plt.text(10.1, 2.133, r'$Q=100$', fontsize=11)
 
 
     ax2 = fig.add_axes((.08, .15, .4, .25))
-    ax2.grid(linestyle='--', linewidth=1)
+    ax2.grid(linestyle='--', linewidth=1, color=color_grid)
     ax2.set_xlim(10, 60)
     f_a_ds = np.linspace(f_a[1], f_a[-1], nf_sd)
     dcp_a_1 = np.interp(f_a_ds, f_a, cpa_a_1 - cpt_a_1)
     dcp_a_2 = np.interp(f_a_ds, f_a, cpa_a_2 - cpt_a_2)
     dcp_a_3 = np.interp(f_a_ds, f_a, cpa_a_3 - cpt_a_3)
-    plt.plot(f_a_ds, dcp_a_1, 'kv--', linewidth=lw2, label=r'$Q=10$')
-    plt.plot(f_a_ds, dcp_a_2, 'k>--', linewidth=lw2, label=r'$Q=32$')
-    plt.plot(f_a_ds, dcp_a_3, 'k^--', linewidth=lw2, label=r'$Q=100$')
+    plt.plot(f_a_ds, dcp_a_1, 'o--', color=color3, linewidth=lw2, label=r'$Q=10$', alpha=alpha)
+    plt.plot(f_a_ds, dcp_a_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
+    plt.plot(f_a_ds, dcp_a_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Residual (m/s)')
-    plt.grid(True)
-    legend = ax2.legend(ncol=3, loc='lower right', shadow=True, fontsize=8)
+    legend = ax2.legend(ncol=3, loc='lower right', shadow=False, fontsize=8)
 
 
 
     ########### Case A | Attenuation coefficient
     ax3 = fig.add_axes((.52, .4, .4, .55))
+    ax3.grid(linestyle='--', linewidth=1, color=color_grid)
     ax3.xaxis.set_ticks_position('none')
     ax3.yaxis.tick_right()
     ax3.set_xticklabels([])
-    ax3.grid(linestyle='--', linewidth=1)
-    ax3.grid(linestyle='--', linewidth=1)
     ax3.set_xlim(10, 60)
     ax3.yaxis.set_label_position('right')
-    plt.plot(f_a, dbt_a_1, 'b', linewidth=lw1, label='Theoretical')
-    plt.plot(f_a, dba_a_1, 'r--', linewidth=lw1, label='Approximation')
-    plt.plot(f_a, dbt_a_2, 'b', linewidth=lw1)
-    plt.plot(f_a, dba_a_2, 'r--', linewidth=lw1)
-    plt.plot(f_a, dbt_a_3, 'b', linewidth=lw1)
-    plt.plot(f_a, dba_a_3, 'r--', linewidth=lw1)
+    plt.plot(f_a, dbt_a_1, color=color1, linewidth=lw1, label='Theoretical')
+    plt.plot(f_a, dba_a_1, '--', color=color2, linewidth=lw1, label='Approximation')
+    plt.plot(f_a, dbt_a_2, color=color1, linewidth=lw1)
+    plt.plot(f_a, dba_a_2, '--', color=color2, linewidth=lw1)
+    plt.plot(f_a, dbt_a_3, color=color1, linewidth=lw1)
+    plt.plot(f_a, dba_a_3, '--', color=color2, linewidth=lw1)
     plt.ylabel(r'$\alpha$ (dB/km)')
-    plt.grid(True)
-    legend = ax3.legend(loc='upper left', shadow=True)
+    legend = ax3.legend(loc='upper left', shadow=False)
     plt.text(48, 55, r'$Q=10$', fontsize=11)
     plt.text(45, 23, r'$Q=32$', fontsize=11)
     plt.text(50, 0, r'$Q=100$', fontsize=11)
@@ -144,8 +150,8 @@ def main():
 
     tmp_scale = 1e5
     ax4 = fig.add_axes((.52, .15, .4, .25))
+    ax4.grid(linestyle='--', linewidth=1, color=color_grid)
     ax4.yaxis.tick_right()
-    ax4.grid(linestyle='--', linewidth=1)
     ax4.set_xlim(10, 60)
     ax4.set_ylim(-0.1, 1.7)
     ax4.yaxis.set_label_position('right')
@@ -153,15 +159,14 @@ def main():
     dal_a_1 = np.interp(f_a_ds, f_a, ala_a_1 - alt_a_1) * tmp_scale
     dal_a_2 = np.interp(f_a_ds, f_a, ala_a_2 - alt_a_2) * tmp_scale
     dal_a_3 = np.interp(f_a_ds, f_a, ala_a_3 - alt_a_3) * tmp_scale
-    plt.plot(f_a_ds, dal_a_1, 'kv--', linewidth=lw2, label=r'$Q=10$')
-    plt.plot(f_a_ds, dal_a_2, 'k>--', linewidth=lw2, label=r'$Q=32$')
-    plt.plot(f_a_ds, dal_a_3, 'k^--', linewidth=lw2, label=r'$Q=100$')
+    plt.plot(f_a_ds, dal_a_1, 'o--', color=color3, linewidth=lw2, label=r'$Q=10$', alpha=alpha)
+    plt.plot(f_a_ds, dal_a_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
+    plt.plot(f_a_ds, dal_a_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel(r'$\Delta\alpha$ ($10^{-5}$ dB/km)')
-    plt.grid(True)
-    legend = ax4.legend(ncol=3, loc='upper right', shadow=True, fontsize=8)
+    legend = ax4.legend(ncol=3, loc='upper right', shadow=False, fontsize=8)
 
-    fig.savefig('fig2a.pdf', dpi=300)
+    fig.savefig('fig02a.pdf', dpi=300)
 
 
 
@@ -172,58 +177,54 @@ def main():
     ax1 = fig.add_axes((.08, .4, .4, .55))
     ax1.xaxis.set_ticks_position('none')
     ax1.set_xticklabels([])
-    ax1.grid(linestyle='--', linewidth=1)
+    ax1.grid(linestyle='--', linewidth=1, color=color_grid)
     ax1.set_xlim(10, 200)
-    plt.plot(f_b, cpt_b_1 / 1000, 'b', linewidth=lw1, label='Theoretical')
-    plt.plot(f_b, cpa_b_1 / 1000, 'r--', linewidth=lw1, label='Approximation')
-    plt.plot(f_b, cpt_b_2 / 1000, 'b', linewidth=lw1)
-    plt.plot(f_b, cpa_b_2 / 1000, 'r--', linewidth=lw1)
-    plt.plot(f_b, cpt_b_3 / 1000, 'b', linewidth=lw1)
-    plt.plot(f_b, cpa_b_3 / 1000, 'r--', linewidth=lw1)
+    plt.plot(f_b, cpt_b_1 / 1000, color=color1, linewidth=lw1, label='Theoretical')
+    plt.plot(f_b, cpa_b_1 / 1000, '--', color=color2, linewidth=lw1, label='Approximation')
+    plt.plot(f_b, cpt_b_2 / 1000, color=color1, linewidth=lw1)
+    plt.plot(f_b, cpa_b_2 / 1000, '--', color=color2, linewidth=lw1)
+    plt.plot(f_b, cpt_b_3 / 1000, color=color1, linewidth=lw1)
+    plt.plot(f_b, cpa_b_3 / 1000, '--', color=color2, linewidth=lw1)
     plt.ylabel('Velocity (km/s)')
-    plt.grid(True)
-    legend = ax1.legend(loc='lower right', shadow=True)
+    legend = ax1.legend(loc='lower right', shadow=False)
     plt.text(30, 2.02, r'$Q=10$', fontsize=11)
     plt.text(14, 2.10, r'$Q=32$', fontsize=11)
     plt.text(10.2, 2.17, r'$Q=100$', fontsize=11)
 
 
     ax2 = fig.add_axes((.08, .15, .4, .25))
-    ax2.grid(linestyle='--', linewidth=1)
+    ax2.grid(linestyle='--', linewidth=1, color=color_grid)
     ax2.set_xlim(10, 200)
     f_b_ds = np.linspace(f_b[1], f_b[-1], nf_sd)
     dcp_b_1 = np.interp(f_b_ds, f_b, cpa_b_1 - cpt_b_1)
     dcp_b_2 = np.interp(f_b_ds, f_b, cpa_b_2 - cpt_b_2)
     dcp_b_3 = np.interp(f_b_ds, f_b, cpa_b_3 - cpt_b_3)
-    plt.plot(f_b_ds, dcp_b_1, 'kv--', linewidth=lw2, label=r'$Q=10$')
-    plt.plot(f_b_ds, dcp_b_2, 'k>--', linewidth=lw2, label=r'$Q=32$')
-    plt.plot(f_b_ds, dcp_b_3, 'k^--', linewidth=lw2, label=r'$Q=100$')
+    plt.plot(f_b_ds, dcp_b_1, 'o--', color=color3, linewidth=lw2, label=r'$Q=10$', alpha=alpha)
+    plt.plot(f_b_ds, dcp_b_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
+    plt.plot(f_b_ds, dcp_b_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Residual (m/s)')
-    plt.grid(True)
-    legend = ax2.legend(ncol=3, loc='lower right', shadow=True, fontsize=8)
+    legend = ax2.legend(ncol=3, loc='lower right', shadow=False, fontsize=8)
 
 
 
 
     ########### Case B | Attenuation coefficient
     ax3 = fig.add_axes((.52, .4, .4, .55))
+    ax3.grid(linestyle='--', linewidth=1, color=color_grid)
     ax3.xaxis.set_ticks_position('none')
     ax3.yaxis.tick_right()
     ax3.set_xticklabels([])
-    ax3.grid(linestyle='--', linewidth=1)
-    ax3.grid(linestyle='--', linewidth=1)
     ax3.set_xlim(10, 200)
     ax3.yaxis.set_label_position('right')
-    plt.plot(f_b, dbt_b_1, 'b', linewidth=lw1, label='Theoretical')
-    plt.plot(f_b, dba_b_1, 'r--', linewidth=lw1, label='Approximation')
-    plt.plot(f_b, dbt_b_2, 'b', linewidth=lw1)
-    plt.plot(f_b, dba_b_2, 'r--', linewidth=lw1)
-    plt.plot(f_b, dbt_b_3, 'b', linewidth=lw1)
-    plt.plot(f_b, dba_b_3, 'r--', linewidth=lw1)
+    plt.plot(f_b, dbt_b_1, color=color1, linewidth=lw1, label='Theoretical')
+    plt.plot(f_b, dba_b_1, '--',color=color2, linewidth=lw1, label='Approximation')
+    plt.plot(f_b, dbt_b_2, color=color1, linewidth=lw1)
+    plt.plot(f_b, dba_b_2, '--', color=color2, linewidth=lw1)
+    plt.plot(f_b, dbt_b_3, color=color1, linewidth=lw1)
+    plt.plot(f_b, dba_b_3, '--', color=color2, linewidth=lw1)
     plt.ylabel(r'$\alpha$ (dB/km)')
-    plt.grid(True)
-    legend = ax3.legend(loc='upper left', shadow=True)
+    legend = ax3.legend(loc='upper left', shadow=False)
     plt.text(160, 180, r'$Q=10$', fontsize=11)
     plt.text(145, 70, r'$Q=32$', fontsize=11)
     plt.text(155, 0, r'$Q=100$', fontsize=11)
@@ -231,23 +232,22 @@ def main():
 
     tmp_scale = 1e5
     ax4 = fig.add_axes((.52, .15, .4, .25))
+    ax4.grid(linestyle='--', linewidth=1, color=color_grid)
     ax4.yaxis.tick_right()
-    ax4.grid(linestyle='--', linewidth=1)
     ax4.set_xlim(10, 200)
     ax4.yaxis.set_label_position('right')
     f_b_ds = np.linspace(f_b[1], f_b[-1], nf_sd)
     dal_b_1 = np.interp(f_b_ds, f_b, ala_b_1 - alt_b_1) * tmp_scale
     dal_b_2 = np.interp(f_b_ds, f_b, ala_b_2 - alt_b_2) * tmp_scale
     dal_b_3 = np.interp(f_b_ds, f_b, ala_b_3 - alt_b_3) * tmp_scale
-    plt.plot(f_b_ds, dal_b_1, 'kv--', linewidth=lw2, label=r'$Q=10$')
-    plt.plot(f_b_ds, dal_b_2, 'k>--', linewidth=lw2, label=r'$Q=32$')
-    plt.plot(f_b_ds, dal_b_3, 'k^--', linewidth=lw2, label=r'$Q=100$')
+    plt.plot(f_b_ds, dal_b_1, 'o--', color=color3, linewidth=lw2, label=r'$Q=10$', alpha=alpha)
+    plt.plot(f_b_ds, dal_b_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
+    plt.plot(f_b_ds, dal_b_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel(r'$\Delta\alpha$ ($10^{-5}$ dB/km)')
-    plt.grid(True)
-    legend = ax4.legend(ncol=3, loc='upper right', shadow=True, fontsize=8)
-    fig.savefig('fig2b.pdf', dpi=300)
+    legend = ax4.legend(ncol=3, loc='upper right', shadow=False, fontsize=8)
 
+    fig.savefig('fig02b.pdf', dpi=300)
     # plt.show()
 
     return 0
