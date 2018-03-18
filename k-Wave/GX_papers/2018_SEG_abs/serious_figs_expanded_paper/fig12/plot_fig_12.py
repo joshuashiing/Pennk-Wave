@@ -90,11 +90,11 @@ def main():
     ax2.grid(linestyle='--', linewidth=1, color=color_grid)
     ax2.set_xlim(10, 60)
     f_ds = np.linspace(f[1], f[-1], nf_sd)
-    dcpa_111110 = np.interp(f_ds, f, cpa_111110 - cpt)
-    dcpa_111100 = np.interp(f_ds, f, cpa_111100 - cpt)
-    dcpa_111010 = np.interp(f_ds, f, cpa_111010 - cpt)
-    dcpa_011100 = np.interp(f_ds, f, cpa_011100 - cpt)
-    dcpa_110100 = np.interp(f_ds, f, cpa_110100 - cpt)
+    dcpa_111110 = np.interp(f_ds, f, cpa_111110 - cpt) * 1000
+    dcpa_111100 = np.interp(f_ds, f, cpa_111100 - cpt) * 1000
+    dcpa_111010 = np.interp(f_ds, f, cpa_111010 - cpt) * 1000
+    dcpa_011100 = np.interp(f_ds, f, cpa_011100 - cpt) * 1000
+    dcpa_110100 = np.interp(f_ds, f, cpa_110100 - cpt) * 1000
     plt.plot(f_ds, dcpa_111110, 'o--', color=color7, linewidth=lw2, label='S111110', alpha=alpha)
     plt.plot(f_ds, dcpa_111100, '^--', color=color7, linewidth=lw2, label='S111100', alpha=alpha)
     plt.plot(f_ds, dcpa_111010, 's--', color=color7, linewidth=lw2, label='S111010', alpha=alpha)
