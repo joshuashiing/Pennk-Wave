@@ -1,6 +1,9 @@
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 
 def main():
@@ -64,7 +67,7 @@ def main():
     plt.text(350, 500, r'(d) Viscoacoustic', fontsize=12)
 
     # plt.show()
-    fig.savefig('fig5.pdf', dpi=300)
+    fig.savefig('fig05.pdf', dpi=300)
 
     return 0
 
