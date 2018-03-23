@@ -67,7 +67,8 @@ def main():
     plt.text(350, 500, r'(d) Viscoacoustic', fontsize=12)
 
     # plt.show()
-    fig.savefig('fig05.pdf', dpi=300)
+    # fig.savefig('fig05.pdf', dpi=300)
+    fig.savefig('fig05.png', dpi=300)
 
     return 0
 

@@ -96,7 +96,8 @@ def main():
 
 
     # plt.show()
-    fig.savefig('fig10.pdf', dpi=300)
+    # fig.savefig('fig10.pdf', dpi=300)
+    fig.savefig('fig10.png', dpi=300)
 
     return 0
 

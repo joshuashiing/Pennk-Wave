@@ -62,7 +62,8 @@ def main():
     plt.colorbar(imgQ, cax=cax, label=r'$Q$')
 
     # plt.show()
-    fig.savefig('fig08.pdf', dpi=300)
+    # fig.savefig('fig08.pdf', dpi=300)
+    fig.savefig('fig08.png', dpi=300)
 
     return 0
 

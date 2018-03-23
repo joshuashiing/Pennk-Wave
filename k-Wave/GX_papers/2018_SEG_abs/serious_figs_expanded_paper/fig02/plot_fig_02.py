@@ -104,7 +104,8 @@ def main():
     plt.plot(f_a, cpa_a_2 / 1000, '--', color=color2, linewidth=lw1)
     plt.plot(f_a, cpt_a_3 / 1000, color=color1, linewidth=lw1)
     plt.plot(f_a, cpa_a_3 / 1000, '--', color=color2, linewidth=lw1)
-    plt.ylabel('Velocity (km/s)')
+    # plt.ylabel('Velocity (km/s)')
+    plt.ylabel(r'$c_p$ (km/s)')
     legend = ax1.legend(loc='lower right', shadow=False)
     plt.text(16, 2.02, r'$Q=10$', fontsize=11)
     plt.text(14, 2.103, r'$Q=32$', fontsize=11)
@@ -122,7 +123,8 @@ def main():
     plt.plot(f_a_ds, dcp_a_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
     plt.plot(f_a_ds, dcp_a_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Residual (m/s)')
+    # plt.ylabel('Residual (m/s)')
+    plt.ylabel(r'$\Delta c_p$ (m/s)')
     legend = ax2.legend(ncol=3, loc='lower right', shadow=False, fontsize=8)
 
 
@@ -185,7 +187,8 @@ def main():
     plt.plot(f_b, cpa_b_2 / 1000, '--', color=color2, linewidth=lw1)
     plt.plot(f_b, cpt_b_3 / 1000, color=color1, linewidth=lw1)
     plt.plot(f_b, cpa_b_3 / 1000, '--', color=color2, linewidth=lw1)
-    plt.ylabel('Velocity (km/s)')
+    # plt.ylabel('Velocity (km/s)')
+    plt.ylabel(r'$c_p$ (km/s)')
     legend = ax1.legend(loc='lower right', shadow=False)
     plt.text(30, 2.02, r'$Q=10$', fontsize=11)
     plt.text(14, 2.10, r'$Q=32$', fontsize=11)
@@ -203,7 +206,8 @@ def main():
     plt.plot(f_b_ds, dcp_b_2, '^--', color=color3, linewidth=lw2, label=r'$Q=32$', alpha=alpha)
     plt.plot(f_b_ds, dcp_b_3, 's--', color=color3, linewidth=lw2, label=r'$Q=100$', alpha=alpha)
     plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Residual (m/s)')
+    # plt.ylabel('Residual (m/s)')
+    plt.ylabel(r'$\Delta c_p$ (m/s)')
     legend = ax2.legend(ncol=3, loc='lower right', shadow=False, fontsize=8)
 
 
