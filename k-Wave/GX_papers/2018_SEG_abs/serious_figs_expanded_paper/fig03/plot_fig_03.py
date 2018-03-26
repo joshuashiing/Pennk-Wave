@@ -45,7 +45,7 @@ def main():
     plt.plot(t_axis, dt1, color=color1, linewidth=lw1, label='Analytical')
     plt.plot(t_axis, da1, '--', color=color2, linewidth=lw1, label='Numerical')
     plt.text(0.152, -0.050, r'$Q=\infty$ (Acoustic)', fontsize=12)
-    ax1.legend(loc='upper left', shadow=True, fontsize=10)
+    ax1.legend(loc='upper left', shadow=False, fontsize=10)
 
 
     plim = 0.024
@@ -58,7 +58,7 @@ def main():
     plt.plot(t_axis, dt2, color=color1, linewidth=lw1, label='Analytical')
     plt.plot(t_axis, da2, '--', color=color2, linewidth=lw1, label='Numerical')
     plt.text(0.152, 0.017, r'$Q=100$', fontsize=12)
-    ax2.legend(loc='lower left', shadow=True, fontsize=10)
+    ax2.legend(loc='lower left', shadow=False, fontsize=10)
 
     plim = 0.0055
     ax3 = fig.add_axes((0.52, .55, .39, .4))
@@ -71,7 +71,7 @@ def main():
     plt.plot(t_axis, dt3, color=color1, linewidth=lw1, label='Analytical')
     plt.plot(t_axis, da3, '--', color=color2, linewidth=lw1, label='Numerical')
     plt.text(0.232, -0.005, r'$Q=32$', fontsize=12)
-    ax3.legend(loc='upper right', shadow=True, fontsize=10)
+    ax3.legend(loc='upper right', shadow=False, fontsize=10)
 
     plim = 0.00024
     ax4 = fig.add_axes((.52, .15, .39, .4))
@@ -85,11 +85,12 @@ def main():
     plt.plot(t_axis, dt4, color=color1, linewidth=lw1, label='Analytical')
     plt.plot(t_axis, da4, '--', color=color2, linewidth=lw1, label='Numerical')
     plt.text(0.232, 0.00018, r'$Q=10$', fontsize=12)
-    ax4.legend(loc='lower right', shadow=True, fontsize=10)
+    ax4.legend(loc='lower right', shadow=False, fontsize=10)
 
 
     # plt.show()
     fig.savefig('fig03.pdf', dpi=300)
+    # fig.savefig('fig03.png', dpi=300)
 
     return 0
 
