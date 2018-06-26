@@ -149,6 +149,26 @@ elseif strcmp(equation_of_state, 'absorbing_TF111111')
     
     clear c0 w0 gamma
     
+elseif strcmp(equation_of_state, 'absorbing_FD111111')
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+
+    absorb_C_k1 = -gamma .* c .* w0;
+    absorb_C_k2 = ones(size(gamma)) .* c.^2;
+    absorb_C_k3 = gamma .* c.^3 ./ w0;
+    absorb_C_k4 = pi * gamma .* c;
+    absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+    absorb_C_k6 = -3/2 * pi * gamma.^4 .* c.^3 ./ (w0.^2);
+    
+    h = kgrid.dx;
+    Nmax = max(kgrid.Nx, kgrid.Ny);
+    nabla_f1 = -GX_FDRPfilter(-1, Nmax, h);
+    nabla_f2 = GX_FDFLfilter(1, Nmax, h);
+    
+    clear c0 w0 gamma Nmax h
+    
 elseif strcmp(equation_of_state, 'absorbing_TF111110')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;

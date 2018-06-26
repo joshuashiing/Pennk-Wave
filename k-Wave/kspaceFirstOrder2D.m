@@ -676,6 +676,12 @@ tic;
 
 % start time loop
 for t_index = index_start:index_step:index_end
+    
+%     % GXTEST Snapshot
+%     if t_index == 1500
+%         pause
+%     end
+%     % GXTEST Snapshot
 
     % enforce time reversal bounday condition
     if record.time_rev
@@ -813,7 +819,26 @@ for t_index = index_start:index_step:index_end
                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
                     absorb_C_k5 .* rho0_nablau - ...
                     absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
+%                 % GXTEST snapshot
+%                 if t_index == 1500
+%                     nabla1_rho = ifft2(absorb_nabla1 .* rho_fft);
+%                     nabla2_rho = ifft2(absorb_nabla2 .* rho_fft);
+%                     save('snapshot_1500.mat', 'rho_xy', 'rho_fft', 'absorb_nabla1', 'absorb_nabla2', 'nabla1_rho', 'nabla2_rho');
+%                     clear nabla1_rho nabla2_rho
+%                 end
+%                 % GXTEST snapshot
                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
+                
+            case 'absorbing_FD111111'
+                rho_xy = rhox + rhoy;
+                rho0_nablau = rho0 .* (duxdx + duydy);
+                p = absorb_C_k1 .* conv2(rho_xy, nabla_f1, 'same') + ...
+                    absorb_C_k2 .* rho_xy + ...
+                    absorb_C_k3 .* conv2(rho_xy, nabla_f2, 'same') - ...
+                    absorb_C_k4 .* conv2(rho0_nablau, nabla_f1, 'same') - ...
+                    absorb_C_k5 .* rho0_nablau - ...
+                    absorb_C_k6 .* conv2(rho0_nablau, nabla_f2, 'same');
+                clear rho_xy rho0_nablau
                 
             case 'absorbing_TF111110'
                 rho_fft = fft2(rhox + rhoy);

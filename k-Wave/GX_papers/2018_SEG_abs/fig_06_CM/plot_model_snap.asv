@@ -1,3 +1,0 @@
-function plot_model_snap(c, p, n_PML, h, scale, clim, figureid, subid)
-
-p(n_PML

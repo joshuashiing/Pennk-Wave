@@ -17,10 +17,10 @@ plot_DC('case03', '', 1, 'k', 2);
 plot_DC('case03', '111111', 1, 'b:', 2);
 plot_DC('case03', 'c_111110', 1, 'r--', 2);
 figure(1);
-subplot(221); legend('Theoretical', '111111', '111111 close');
-subplot(223); legend('111111', '111111 close');
-subplot(222); legend('Theoretical', '111111', '111111 close');
-subplot(224); legend('111111', '111111 close');
+subplot(221); legend('Theoretical', '111111', '111110 close');
+subplot(223); legend('111111', '111110 close');
+subplot(222); legend('Theoretical', '111111', '111110 close');
+subplot(224); legend('111111', '111110 close');
 
 
 plot_DC('case04', '', 2, 'k', 2);
@@ -33,10 +33,10 @@ plot_DC('case06', '', 2, 'k', 2);
 plot_DC('case06', '111111', 2, 'b:', 2);
 plot_DC('case06', 'c_111110', 2, 'r--', 2);
 figure(2);
-subplot(221); legend('Theoretical', '111111', '111111 close');
-subplot(223); legend('111111', '111111 close');
-subplot(222); legend('Theoretical', '111111', '111111 close');
-subplot(224); legend('111111', '111111 close');
+subplot(221); legend('Theoretical', '111111', '111110 close');
+subplot(223); legend('111111', '111110 close');
+subplot(222); legend('Theoretical', '111111', '111110 close');
+subplot(224); legend('111111', '111110 close');
 
 
 plot_DC('case01', '', 3, 'k', 2);

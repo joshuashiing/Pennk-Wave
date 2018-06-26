@@ -36,7 +36,7 @@ t_snap = 0.8;
 % Media Parameters
 % =========================================================================
 
-model_f0_m = ones(Nx, Ny) * 15;
+model_f0_m = ones(Nx, Ny) * 100;
 model_f0 = ones(Nx, Ny) * 15; 
 model_c0_m = velp;
 model_Q = Qp;
@@ -50,7 +50,7 @@ model_density = ones(Nx, Ny) * 2200;
 % case 1
 mat_name = 'case01';
 mod_mech = 'lossless';
-[t_axis, d] = heter_simu(Nx, Ny, dx, dy, model_f0_m, model_f0, model_c0_m,...
+[t_axis, d] = heter_simu(Nx, Ny, dx, dy, model_f0, model_f0, model_c0_m,...
     model_Q, model_density, f_rw_c, x_src, y_src, x_rec, y_rec, ...
     dt, t_max, mod_mech, t_snap, mat_name);
 save(mat_name, 't_axis', 'd', '-append');
