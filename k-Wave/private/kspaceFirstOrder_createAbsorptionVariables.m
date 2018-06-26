@@ -167,6 +167,11 @@ elseif strcmp(equation_of_state, 'absorbing_FD111111')
     nabla_f1 = -GX_FDRPfilter(-1, Nmax, h);
     nabla_f2 = GX_FDFLfilter(1, Nmax, h);
     
+%     trunacation
+    r = 51;
+    nabla_f1 = nabla_f1((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+    nabla_f2 = nabla_f2((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+    
     clear c0 w0 gamma Nmax h
     
 elseif strcmp(equation_of_state, 'absorbing_TF111110')
