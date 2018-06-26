@@ -92,9 +92,11 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'TF111111';
+% medium.mod_mech = 'TF111111';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
+medium.mod_mech = 'FD111111';
+
 
 d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 % input_args = {'RecordMovie', true};
