@@ -167,17 +167,8 @@ elseif strcmp(equation_of_state, 'absorbing_FD111111')
     nabla_f1 = -GX_FDRPfilter(-1, Nmax, h);
     nabla_f2 = GX_FDFLfilter(1, Nmax, h);
     
-    r = 4;
-    nabla_f1 = nabla_f1((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
-    r = 100;
-    nabla_f2 = nabla_f2((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
-    
-    absorb_nabla1 = (kgrid.k) .^ (-1);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
-    absorb_nabla2 = kgrid.k;
-    absorb_nabla2(isinf(absorb_nabla2)) = 0;
-    absorb_nabla2 = ifftshift(absorb_nabla2);
+    r = 5;
+    nabla_f1 = nabla_f1(Nmax-r
     
     clear c0 w0 gamma Nmax h
     
