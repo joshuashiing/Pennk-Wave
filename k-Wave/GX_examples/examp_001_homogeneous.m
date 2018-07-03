@@ -37,6 +37,7 @@ y_rec = 34.5;        % Receiver location in the y direction [m]
 % =========================================================================
 
 dt = 1e-5;        % Time interval [s]
+% dt = 1e-6;
 t_max = 0.06;        % Simulation end time [s]
 f0 = 200;           % Reference frequency for simulation
 
@@ -95,10 +96,13 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % medium.mod_mech = 'TF111111';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
-medium.mod_mech = 'FD111111';
+% medium.mod_mech = 'FD111111';
+medium.mod_mech = 'GXFD0';
 
 
-d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+d3 = GXFD2D(kgrid, medium, source, sensor);
+
 % input_args = {'RecordMovie', true};
 % d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
 
