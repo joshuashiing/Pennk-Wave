@@ -611,10 +611,17 @@ duydy   = castZeros([kgrid.Nx, kgrid.Ny]);
 p_k     = castZeros([kgrid.Nx, kgrid.Ny]);
 
 % GXTEST
+p1      = castZeros([kgrid.Nx, kgrid.Ny]);
+p2      = castZeros([kgrid.Nx, kgrid.Ny]);
+
 q1      = castZeros([kgrid.Nx, kgrid.Ny]);
 q2      = castZeros([kgrid.Nx, kgrid.Ny]);
 q3      = castZeros([kgrid.Nx, kgrid.Ny]);
 hh = kgrid.dx .^ 4;
+
+ux_sgx  = castZeros([kgrid.Nx + 1, kgrid.Ny]);
+uy_sgy  = castZeros([kgrid.Nx, kgrid.Ny + 1]);
+
 % GXTEST
 
 % run subscript to cast the remaining loop variables to the data type
@@ -688,8 +695,91 @@ for t_index = index_start:index_step:index_end
 %     GXTEST
 %     Finite difference scheme
 
-    q1 = q1 + dt .* csquare .* del2(p) ./ hh;
-    p = p + dt .* q1;
+%     p = p + dt .* q1;
+%     if t_index == 1000
+%         pause
+%     end
+    
+
+
+%     dpx = (p(2:end, :) - p(1:end-1, :)) ./ kgrid.dx;
+%     dpx = [zeros(1, kgrid.Ny); dpx; zeros(1, kgrid.Ny)];
+%     ux_sgx = ux_sgx - dt .* rho0_sgx_inv .* dpx;
+%     
+%     dpy = (p(:, 2:end) - p(:, 1:end-1)) ./ kgrid.dy;
+%     dpy = [zeros(kgrid.Nx, 1), dpy, zeros(kgrid.Nx, 1)];
+%     uy_sgy = uy_sgy - dt .* rho0_sgy_inv .* dpy;
+%     
+%     duxdx = (ux_sgx(2:end, :) - ux_sgx(1:end-1, :)) ./ kgrid.dx;
+%     duydy = (uy_sgy(:, 2:end) - uy_sgy(:, 1:end-1)) ./ kgrid.dy;
+%     
+%     rhox = rhox - dt .* rho0 .* duxdx;
+%     rhoy = rhoy - dt .* rho0 .* duydy;
+%     
+%     p = c.^2 .* (rhox + rhoy);
+    
+    
+    
+    
+    
+    dpx = (p(2:end, :) - p(1:end-1, :)) ./ kgrid.dx;
+    dpx = [zeros(1, kgrid.Ny); dpx; zeros(1, kgrid.Ny)];
+    ux_sgx = ux_sgx - dt .* dpx;
+    
+    dpy = (p(:, 2:end) - p(:, 1:end-1)) ./ kgrid.dy;
+    dpy = [zeros(kgrid.Nx, 1), dpy, zeros(kgrid.Nx, 1)];
+    uy_sgy = uy_sgy - dt .* dpy;
+    
+    duxdx = (ux_sgx(2:end, :) - ux_sgx(1:end-1, :)) ./ kgrid.dx;
+    duydy = (uy_sgy(:, 2:end) - uy_sgy(:, 1:end-1)) ./ kgrid.dy;
+    
+    rhox = rhox - dt .* duxdx;
+    rhoy = rhoy - dt .* duydy;
+    
+    p = c.^2 .* (rhox + rhoy);
+    
+    
+    
+    
+
+%     ux_sgx = bsxfun(@times, pml_x_sgx, ...
+%         bsxfun(@times, pml_x_sgx, ux_sgx) ...
+%         - dt .* rho0_sgx_inv .* real(ifft2( bsxfun(@times, ddx_k_shift_pos, kappa .* p_k) )) ...
+%         );
+%     uy_sgy = bsxfun(@times, pml_y_sgy, ...
+%         bsxfun(@times, pml_y_sgy, uy_sgy) ...
+%         - dt .* rho0_sgy_inv .* real(ifft2( bsxfun(@times, ddy_k_shift_pos, kappa .* p_k) )) ...
+%         );  
+%     
+%     duxdx = real(ifft2( bsxfun(@times, ddx_k_shift_neg, kappa .* fft2(ux_sgx)) ));
+%     duydy = real(ifft2( bsxfun(@times, ddy_k_shift_neg, kappa .* fft2(uy_sgy)) ));         
+%     
+%     rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
+%     rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);    
+%     
+%     p = c.^2 .* (rhox + rhoy);
+    
+    
+    
+    
+%     p = c.^2 * dt^2 .* GX_del2_9pt(p2, kgrid.dx) + 2 * p2 - p1;
+    
+    
+    
+    
+    
+    
+    
+%     q1 = q1 + dt * real(ifft2(-nabla_k2 .* p_k)) .* csquare;
+%     p = p + dt .* q1;
+    
+
+
+
+%     q1 = q1 + dt .* csquare .* del2(p) ./ hh;
+%     p = p + dt .* q1;
+    
+    
 
 %     q1 = q1 + dt .* csquare .* (del2(p) ./ hh + ...
 %                                 absorb_C1 .* q2 + ...
@@ -779,10 +869,15 @@ for t_index = index_start:index_step:index_end
     if p_source >= t_index
         p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
     end
+    
+%     GXTEST
+    p1 = p2;
+    p2 = p;
+%     GXTEST
         
     
-    % precompute fft of p here so p can be modified for visualisation
-%     p_k = fft2(p);
+%     % precompute fft of p here so p can be modified for visualisation
+    p_k = fft2(p);
 
     % extract required sensor data from the pressure and particle velocity
     % fields if the number of time steps elapsed is greater than

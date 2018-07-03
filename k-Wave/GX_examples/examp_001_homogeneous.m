@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 10;             % Quality factor
+Q = 1000000;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -30,7 +30,7 @@ f_rw_c = 200;       % Center frequency of ricker wavelet [Hz]
 x_src = 0.;          % Source location in the x direction [m]
 y_src = -34.5;       % Source location in the y direction [m]
 x_rec = 0.;          % Receiver location in the x direction [m]
-y_rec = 34.5;        % Receiver location in the y direction [m]
+y_rec = 0;        % Receiver location in the y direction [m]
 
 % =========================================================================
 % Simulation Parameters
@@ -98,6 +98,7 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % medium.mod_mech = 'TT17';
 % medium.mod_mech = 'FD111111';
 medium.mod_mech = 'GXFD0';
+% medium.mod_mech = 'lossless';
 
 
 % d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);

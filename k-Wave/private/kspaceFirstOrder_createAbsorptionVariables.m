@@ -198,6 +198,11 @@ elseif strcmp(equation_of_state, 'absorbing_GXFD0')
     Nmax = max(kgrid.Nx, kgrid.Ny);
     nabla_filter = GX_FDFLfilter(1, r + 1, h);
     clear h r Nmax
+    
+    nabla_k2 = (kgrid.k) .^ 2;
+    nabla_k2(isinf(nabla_k2)) = 0;
+    nabla_k2 = ifftshift(nabla_k2);
+    
 %     nabla_filter = GX_FDFLfilter(1, Nmax, h);
 %     nabla_filter = nabla_filter((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
     
@@ -228,7 +233,7 @@ elseif strcmp(equation_of_state, 'absorbing_GXFD0')
 %     absorb_nabla2(isinf(absorb_nabla2)) = 0;
 %     absorb_nabla2 = ifftshift(absorb_nabla2);
     
-    clear c0 w0 gamma c
+    clear c0 w0 gamma
     
 elseif strcmp(equation_of_state, 'absorbing_TF111110')
     % Calculate media parameter matrices
