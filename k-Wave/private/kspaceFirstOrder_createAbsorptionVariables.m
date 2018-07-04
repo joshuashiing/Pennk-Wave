@@ -199,9 +199,9 @@ elseif strcmp(equation_of_state, 'absorbing_GXFD0')
     nabla_filter = GX_FDFLfilter(1, r + 1, h);
     clear h r Nmax
     
-    nabla_k2 = (kgrid.k) .^ 2;
-    nabla_k2(isinf(nabla_k2)) = 0;
-    nabla_k2 = ifftshift(nabla_k2);
+%     nabla_k2 = (kgrid.k) .^ 2;
+%     nabla_k2(isinf(nabla_k2)) = 0;
+%     nabla_k2 = ifftshift(nabla_k2);
     
 %     nabla_filter = GX_FDFLfilter(1, Nmax, h);
 %     nabla_filter = nabla_filter((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
