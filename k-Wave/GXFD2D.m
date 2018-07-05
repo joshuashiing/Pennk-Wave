@@ -697,24 +697,16 @@ tic;
 % start time loop
 for t_index = index_start:index_step:index_end
     
+%     p = p + dt * q1;
+%     q1 = q1 + dt * c.^2 .* GX_del2_9pt(p_pre, h);
+%     p_pre = p;
     
-%     GXTEST
-%     Finite difference scheme
-
-%     p = p + dt .* q1;
-%     if t_index == 1000
-%         pause
-%     end
+%     q1 = q1 + dt .* GX_del2_9pt(p, h);
+%     p_pre = p_pre + dt * c.^2 .* q1;
+%     p = p_pre;
+% %     p = p + dt .* c.^2 .* q1;
     
 
-
-
-%     q = q + GX_del2_9pt(p, kgrid.dx) * dt;
-%     rhoxy = rhoxy + dt * q;
-%     p = c.^2 .* rhoxy;
-    
-    
-%     q2 = GX_del2_9pt(p, h);
     q2 = conv2(p, nabla_filter, 'same');
     q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
                     absorb_C1 .* q2 + ...
@@ -724,29 +716,61 @@ for t_index = index_start:index_step:index_end
     rhoxy = rhoxy + dt * q1;
     p = c.^2 .* rhoxy;
     
+
+
+%     q1 = q1 + dt .* GX_del2_9pt(p, h);    
+%     rhoxy = rhoxy + dt * q1;
+%     p = c.^2 .* rhoxy;
+    
+    
+    
+    
+    
+%     GXTEST
+%     Finite difference scheme
+
+%     p = p + dt .* q1;
+%     if t_index == 1000
+%         pause
+%     end
+    
     
 
-    
-    
-    
-    
-    
-
-%     q1 = q1 + dt .* csquare .* (del2(p) ./ hh + ...
-%                                 absorb_C1 .* q2 + ...
-%                                 absorb_C2 .* del2(q2) ./ hh + ...
-%                                 absorb_C3 .* q3 + ...
-%                                 absorb_C4 .* del2(q1) ./ hh);
-%     q2 = conv2(p, nabla_filter, 'same');
-%     q3 = conv2(q1, nabla_filter, 'same');
+% %     max(abs(p(:)))
+% %     p_pre = p;
 %     p = p + dt * q1;
+%     q1 = q1 + dt * c.^2 .* (GX_del2_9pt(p_pre, h) + ...
+%                        absorb_C1 .* q2 + ...
+%                        absorb_C2 .* GX_del2_9pt(q2, h) + ...
+%                        absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
+%                        absorb_C4 .* GX_del2_9pt(q1, h));
+%     q2 = conv2(p, nabla_filter, 'same');
+%     p_pre = p;
 
-%     GXTEST 
     
-    
-            
 
+
+
+%     q = q + GX_del2_9pt(p, kgrid.dx) * dt;
+%     rhoxy = rhoxy + dt * q;
+%     p = c.^2 .* rhoxy;
     
+    
+% %     GXTEST Work!
+%     q2 = conv2(p, nabla_filter, 'same');
+%     q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
+%                     absorb_C1 .* q2 + ...
+%                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
+%                     absorb_C3 .* conv2(dpdt, nabla_filter, 'same') + ...
+%                     absorb_C4 .* GX_del2_9pt(dpdt, h));
+%     rhoxy = rhoxy + dt * q1;
+%     p = c.^2 .* rhoxy;
+% %     GXTEST Work!
+    dpdt = (p - p_pre) ./ dt;
+%     p_pre = p;
+    
+
+
 %     GXTEST
     
     if p_source >= t_index
@@ -755,7 +779,7 @@ for t_index = index_start:index_step:index_end
     end
     
     
-    dpdt = (p - p_pre) ./ dt;
+%     dpdt = (p - p_pre) ./ dt;
     p_pre = p;
     
         
