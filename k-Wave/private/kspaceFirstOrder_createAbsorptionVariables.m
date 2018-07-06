@@ -149,6 +149,92 @@ elseif strcmp(equation_of_state, 'absorbing_TF111111')
     
     clear c0 w0 gamma
     
+elseif strcmp(equation_of_state, 'absorbing_FD111111')
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+
+    absorb_C_k1 = -gamma .* c .* w0;
+    absorb_C_k2 = ones(size(gamma)) .* c.^2;
+    absorb_C_k3 = gamma .* c.^3 ./ w0;
+    absorb_C_k4 = pi * gamma .* c;
+    absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+    absorb_C_k6 = -3/2 * pi * gamma.^4 .* c.^3 ./ (w0.^2);
+    
+    h = kgrid.dx;
+    Nmax = max(kgrid.Nx, kgrid.Ny);
+    nabla_f1 = -GX_FDRPfilter(-1, Nmax, h);
+    nabla_f2 = GX_FDFLfilter(1, Nmax, h);
+    
+    r = 4;
+    nabla_f1 = nabla_f1((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+    r = 100;
+    nabla_f2 = nabla_f2((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+    
+    absorb_nabla1 = (kgrid.k) .^ (-1);
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
+    absorb_nabla1 = ifftshift(absorb_nabla1);
+    absorb_nabla2 = kgrid.k;
+    absorb_nabla2(isinf(absorb_nabla2)) = 0;
+    absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    clear c0 w0 gamma Nmax h
+
+elseif strcmp(equation_of_state, 'absorbing_GXFD0')
+    gamma = atan(1 ./ medium.Q) / pi;
+    c0 = medium.sound_speed;
+    c = c0 .* cos(pi * gamma / 2);
+    w0 = medium.f0 * 2 * pi;
+    
+    absorb_C1 = gamma .* w0 ./ c;
+    absorb_C2 = gamma .* c ./ w0;
+    absorb_C3 = -pi * gamma ./ c;
+    absorb_C4 = pi * gamma.^2 ./ w0;
+    csquare = c .^ 2;
+    
+    h = kgrid.dx;
+    r = 4;
+    Nmax = max(kgrid.Nx, kgrid.Ny);
+    nabla_filter = GX_FDFLfilter(1, r + 1, h);
+    clear h r Nmax
+    
+%     nabla_k2 = (kgrid.k) .^ 2;
+%     nabla_k2(isinf(nabla_k2)) = 0;
+%     nabla_k2 = ifftshift(nabla_k2);
+    
+%     nabla_filter = GX_FDFLfilter(1, Nmax, h);
+%     nabla_filter = nabla_filter((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+    
+    
+    
+
+%     absorb_C_k1 = -gamma .* c .* w0;
+%     absorb_C_k2 = ones(size(gamma)) .* c.^2;
+%     absorb_C_k3 = gamma .* c.^3 ./ w0;
+%     absorb_C_k4 = pi * gamma .* c;
+%     absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
+%     absorb_C_k6 = -3/2 * pi * gamma.^4 .* c.^3 ./ (w0.^2);
+%     
+%     h = kgrid.dx;
+%     Nmax = max(kgrid.Nx, kgrid.Ny);
+%     nabla_f1 = -GX_FDRPfilter(-1, Nmax, h);
+%     nabla_f2 = GX_FDFLfilter(1, Nmax, h);
+%     
+%     r = 4;
+%     nabla_f1 = nabla_f1((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+%     r = 100;
+%     nabla_f2 = nabla_f2((Nmax-r):(Nmax+r), (Nmax-r):(Nmax+r));
+%     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+    
+    clear c0 w0 gamma
+    
 elseif strcmp(equation_of_state, 'absorbing_TF111110')
     % Calculate media parameter matrices
     gamma = atan(1 ./ medium.Q) / pi;

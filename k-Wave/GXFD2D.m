@@ -1,4 +1,4 @@
-function [sensor_data, mem_usage] = kspaceFirstOrder2D(kgrid, medium, source, sensor, varargin) %#ok<STOUT>
+function [sensor_data, mem_usage] = GXFD2D(kgrid, medium, source, sensor, varargin) %#ok<STOUT>
 %KSPACEFIRSTORDER2D 2D time-domain simulation of wave propagation.
 %
 % DESCRIPTION:
@@ -602,13 +602,33 @@ end
 % preallocate the loop variables using the castZeros anonymous function
 % (this creates a matrix of zeros in the data type specified by data_cast)
 p       = castZeros([kgrid.Nx, kgrid.Ny]);
-rhox    = castZeros([kgrid.Nx, kgrid.Ny]);
-rhoy    = castZeros([kgrid.Nx, kgrid.Ny]);
+% rhox    = castZeros([kgrid.Nx, kgrid.Ny]);
+% rhoy    = castZeros([kgrid.Nx, kgrid.Ny]);
 ux_sgx  = castZeros([kgrid.Nx, kgrid.Ny]);
 uy_sgy  = castZeros([kgrid.Nx, kgrid.Ny]);
-duxdx   = castZeros([kgrid.Nx, kgrid.Ny]);
-duydy   = castZeros([kgrid.Nx, kgrid.Ny]);
-p_k     = castZeros([kgrid.Nx, kgrid.Ny]);
+% duxdx   = castZeros([kgrid.Nx, kgrid.Ny]);
+% duydy   = castZeros([kgrid.Nx, kgrid.Ny]);
+% p_k     = castZeros([kgrid.Nx, kgrid.Ny]);
+
+% GXTEST
+dpdt    = castZeros([kgrid.Nx, kgrid.Ny]);
+p_pre   = castZeros([kgrid.Nx, kgrid.Ny]);
+
+% q       = castZeros([kgrid.Nx, kgrid.Ny]);
+% p1      = castZeros([kgrid.Nx, kgrid.Ny]);
+% p2      = castZeros([kgrid.Nx, kgrid.Ny]);
+
+q1      = castZeros([kgrid.Nx, kgrid.Ny]);
+q2      = castZeros([kgrid.Nx, kgrid.Ny]);
+h       = kgrid.dx;
+% q3      = castZeros([kgrid.Nx, kgrid.Ny]);
+% hh = kgrid.dx .^ 4;
+
+% ux_sgx  = castZeros([kgrid.Nx + 1, kgrid.Ny]);
+% uy_sgy  = castZeros([kgrid.Nx, kgrid.Ny + 1]);
+rhoxy   = castZeros([kgrid.Nx, kgrid.Ny]);
+
+% GXTEST
 
 % run subscript to cast the remaining loop variables to the data type
 % specified by data_cast 
@@ -677,389 +697,93 @@ tic;
 % start time loop
 for t_index = index_start:index_step:index_end
     
-%     % GXTEST Snapshot
-%     if t_index == 1500
+%     p = p + dt * q1;
+%     q1 = q1 + dt * c.^2 .* GX_del2_9pt(p_pre, h);
+%     p_pre = p;
+    
+%     q1 = q1 + dt .* GX_del2_9pt(p, h);
+%     p_pre = p_pre + dt * c.^2 .* q1;
+%     p = p_pre;
+% %     p = p + dt .* c.^2 .* q1;
+    
+
+    q2 = conv2(p, nabla_filter, 'same');
+    q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
+                    absorb_C1 .* q2 + ...
+                    absorb_C2 .* GX_del2_9pt(q2, h) + ...
+                    absorb_C3 .* conv2(dpdt, nabla_filter, 'same') + ...
+                    absorb_C4 .* GX_del2_9pt(dpdt, h));
+    rhoxy = rhoxy + dt * q1;
+    p = c.^2 .* rhoxy;
+    
+
+
+%     q1 = q1 + dt .* GX_del2_9pt(p, h);    
+%     rhoxy = rhoxy + dt * q1;
+%     p = c.^2 .* rhoxy;
+    
+    
+    
+    
+    
+%     GXTEST
+%     Finite difference scheme
+
+%     p = p + dt .* q1;
+%     if t_index == 1000
 %         pause
 %     end
-%     % GXTEST Snapshot
+    
+    
 
-    % enforce time reversal bounday condition
-    if record.time_rev
-      
-        % load pressure value and enforce as a Dirichlet boundary condition
-        p(sensor_mask_index) = sensor.time_reversal_boundary_data(:, t_index);
+% %     max(abs(p(:)))
+% %     p_pre = p;
+%     p = p + dt * q1;
+%     q1 = q1 + dt * c.^2 .* (GX_del2_9pt(p_pre, h) + ...
+%                        absorb_C1 .* q2 + ...
+%                        absorb_C2 .* GX_del2_9pt(q2, h) + ...
+%                        absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
+%                        absorb_C4 .* GX_del2_9pt(q1, h));
+%     q2 = conv2(p, nabla_filter, 'same');
+%     p_pre = p;
 
-        % update p_k
-        p_k = fft2(p);
+    
 
-        % compute rhox and rhoy using an adiabatic equation of state
-        rhox_mod = 0.5 .* p ./ (c.^2);
-        rhoy_mod = 0.5 .* p ./ (c.^2);
-        rhox(sensor_mask_index) = rhox_mod(sensor_mask_index);
-        rhoy(sensor_mask_index) = rhoy_mod(sensor_mask_index);
-            
-    end
-            
-    % calculate ux and uy at the next time step using dp/dx and dp/dy at
-    % the current time step
-    ux_sgx = bsxfun(@times, pml_x_sgx, ...
-        bsxfun(@times, pml_x_sgx, ux_sgx) ...
-        - dt .* rho0_sgx_inv .* real(ifft2( bsxfun(@times, ddx_k_shift_pos, kappa .* p_k) )) ...
-        );
-    uy_sgy = bsxfun(@times, pml_y_sgy, ...
-        bsxfun(@times, pml_y_sgy, uy_sgy) ...
-        - dt .* rho0_sgy_inv .* real(ifft2( bsxfun(@times, ddy_k_shift_pos, kappa .* p_k) )) ...
-        );  
+
+
+%     q = q + GX_del2_9pt(p, kgrid.dx) * dt;
+%     rhoxy = rhoxy + dt * q;
+%     p = c.^2 .* rhoxy;
     
-    % add in the velocity source terms
-    if ux_source >= t_index
-        if strcmp(source.u_mode, 'dirichlet')
-            
-            % enforce the source values as a dirichlet boundary condition
-            ux_sgx(u_source_pos_index) = source.ux(u_source_sig_index, t_index);
-            
-        else
-            
-            % add the source values to the existing field values 
-            ux_sgx(u_source_pos_index) = ux_sgx(u_source_pos_index) + source.ux(u_source_sig_index, t_index);
-            
-        end
-    end
-    if uy_source >= t_index
-        if strcmp(source.u_mode, 'dirichlet')
-            
-            % enforce the source values as a dirichlet boundary condition        
-            uy_sgy(u_source_pos_index) = source.uy(u_source_sig_index, t_index);
-            
-        else
-            
-            % add the source values to the existing field values 
-            uy_sgy(u_source_pos_index) = uy_sgy(u_source_pos_index) + source.uy(u_source_sig_index, t_index);
-            
-        end
-    end
-        
-    % calculate dux/dx and duy/dy at the next time step
-    duxdx = real(ifft2( bsxfun(@times, ddx_k_shift_neg, kappa .* fft2(ux_sgx)) ));
-    duydy = real(ifft2( bsxfun(@times, ddy_k_shift_neg, kappa .* fft2(uy_sgy)) ));         
     
-    % calculate rhox and rhoy at the next time step
-    if ~nonlinear
-        
-        % use linearised mass conservation equation
-        rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0 .* duxdx);
-        rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0 .* duydy);    
-        
-    else
+% %     GXTEST Work!
+%     q2 = conv2(p, nabla_filter, 'same');
+%     q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
+%                     absorb_C1 .* q2 + ...
+%                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
+%                     absorb_C3 .* conv2(dpdt, nabla_filter, 'same') + ...
+%                     absorb_C4 .* GX_del2_9pt(dpdt, h));
+%     rhoxy = rhoxy + dt * q1;
+%     p = c.^2 .* rhoxy;
+% %     GXTEST Work!
+    dpdt = (p - p_pre) ./ dt;
+%     p_pre = p;
     
-        % use nonlinear mass conservation equation (explicit calculation)
-        rho0_plus_rho = 2 .* (rhox + rhoy) + rho0;
-        rhox = bsxfun(@times, pml_x, bsxfun(@times, pml_x, rhox) - dt .* rho0_plus_rho .* duxdx);
-        rhoy = bsxfun(@times, pml_y, bsxfun(@times, pml_y, rhoy) - dt .* rho0_plus_rho .* duydy);
-        
-%         % uncomment to force the convective nonlinearity term to be zero
-%         % in regions of the domain where BonA is zero 
-%         rhox = bsxfun(@times, pml_x, ( bsxfun(@times, pml_x, rhox) - dt .* ( 2*(rhox + rhoy).*(medium.BonA ~= 0) + rho0) .* duxdx ) );
-%         rhoy = bsxfun(@times, pml_y, ( bsxfun(@times, pml_y, rhoy) - dt .* ( 2*(rhox + rhoy).*(medium.BonA ~= 0) + rho0) .* duydy ) );        
-        
-    end  
-    
-% %     GXTEST
-%     % add in the pre-scaled pressure source term as a mass source    
-%     if p_source >= t_index 
-%         if strcmp(source.p_mode, 'dirichlet')
-%             
-%             % enforce the source values as a dirichlet boundary condition
-%             rhox(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             
-%         else
-%             
-%             % add the source values to the existing field values
-%             rhox(p_source_pos_index) = rhox(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = rhoy(p_source_pos_index) + source.p(p_source_sig_index, t_index);       
-%             
-%         end
-%     end
-% %     GXTEST
-    
-    if ~nonlinear
-        switch equation_of_state
-            case 'lossless'
-                
-                % calculate p using a linear adiabatic equation of state
-                p = c.^2 .* (rhox + rhoy);
-                
-            case 'absorbing'
-                
-                % calculate p using a linear absorbing equation of state          
-                p = c.^2 .* ( ...
-                   (rhox + rhoy) ...
-                   + absorb_tau .* real(ifft2( absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)) )) ...
-                   - absorb_eta .* real(ifft2( absorb_nabla2 .* fft2(rhox + rhoy) )) ...
-                   );
-%             GXTEST
-            case 'absorbing_TZ14'
-                p = c.^2 .* (+ absorb_tau .* real(ifft2(absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)))) ...
-                             - absorb_eta .* real(ifft2(absorb_nabla2 .* fft2(rhox + rhoy))));
-                         
-            case 'absorbing_TZ17'
-                p = cb.^2 .* ( (rhox + rhoy) + ...
-                    absorb_tau .* real(ifft2(absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)))) - ...
-                    absorb_eta .* real(ifft2(absorb_nabla2 .* fft2(rhox + rhoy))));
-                
-            case 'absorbing_TF111111'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-                    absorb_C_k5 .* rho0_nablau - ...
-                    absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
-%                 % GXTEST snapshot
-%                 if t_index == 1500
-%                     nabla1_rho = ifft2(absorb_nabla1 .* rho_fft);
-%                     nabla2_rho = ifft2(absorb_nabla2 .* rho_fft);
-%                     save('snapshot_1500.mat', 'rho_xy', 'rho_fft', 'absorb_nabla1', 'absorb_nabla2', 'nabla1_rho', 'nabla2_rho');
-%                     clear nabla1_rho nabla2_rho
-%                 end
-%                 % GXTEST snapshot
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_FD111111'
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho_fft = fft2(rhox + rhoy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* conv2(rho_xy, nabla_f1, 'same') + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* conv2(rho_xy, nabla_f2, 'same') - ...
-                    absorb_C_k4 .* conv2(rho0_nablau, nabla_f1, 'same') - ...
-                    absorb_C_k5 .* rho0_nablau - ...
-                    absorb_C_k6 .* conv2(rho0_nablau, nabla_f2, 'same');
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* conv2(rho_xy, nabla_f2, 'same') - ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-%                     absorb_C_k5 .* rho0_nablau - ...
-%                     absorb_C_k6 .* conv2(rho0_nablau, nabla_f2, 'same');
-                clear rho_xy rho0_nablau
-                
-            case 'absorbing_TF111110'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-                    absorb_C_k5 .* rho0_nablau;
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TF111100'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TF011100'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TF110100'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-                clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            case 'absorbing_TF111110_ld'
-                rho_xy = rhox + rhoy;
-                rho0_nablau = rho0 .* (duxdx + duydy);
-                rho0_nablau_fft = fft2(rho0_nablau);
-                p = absorb_C_k2 .* rho_xy - ...
-                    absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-                    absorb_C_k5 .* rho0_nablau;
-                clear rho_xy rho0_nablau rho0_nablau_fft
-            
-            case 'absorbing_TF111110_dd'
-                rho_fft = fft2(rhox + rhoy);
-                rho_xy = rhox + rhoy;
-                p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-                    absorb_C_k2 .* rho_xy + ...
-                    absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft));
-                clear rho_fft rho_xy
-                
-%             case 'absorbing_TT17'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* rho0_nablau;
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%             
-%             case 'absorbing_DT17'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-%                     absorb_C_k5 .* rho0_nablau;
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%             case 'absorbing_TF17'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-%                     absorb_C_k5 .* rho0_nablau - ...
-%                     absorb_C_k6 .* real(ifft2(absorb_nabla2 .* rho0_nablau_fft));
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%             case 'absorbing_FT17'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft)) - ...
-%                     absorb_C_k5 .* rho0_nablau;
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%             case 'absorbing_TO17'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* rho0_nablau;
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%             case 'absorbing_TO18'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy + ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k4 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%             case 'absorbing_MO18'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* rho_xy + ...
-%                     absorb_C_k2 .* real(ifft2(absorb_nabla2 .* rho_fft)) - ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-%                 
-%              case 'absorbing_MT18'
-%                 rho_fft = fft2(rhox + rhoy);
-%                 rho_xy = rhox + rhoy;
-%                 rho0_nablau = rho0 .* (duxdx + duydy);
-%                 rho0_nablau_fft = fft2(rho0_nablau);
-%                 p = absorb_C_k1 .* real(ifft2(absorb_nabla1 .* rho_fft)) + ...
-%                     absorb_C_k2 .* rho_xy - ...
-%                     absorb_C_k3 .* real(ifft2(absorb_nabla1 .* rho0_nablau_fft));
-%                 clear rho_fft rho_xy rho0_nablau rho0_nablau_fft
-                
-            
-%             GXTEST
-               
-        end
-    else
-        switch equation_of_state
-            case 'lossless'
-                
-                % calculate p using a nonlinear adiabatic equation of state
-                p = c.^2 .* (rhox + rhoy + medium.BonA .* (rhox + rhoy).^2 ./ (2 .* rho0));
-                
-            case 'absorbing'
-                
-                % calculate p using a nonlinear absorbing equation of state
-                p = c.^2 .* ( ...
-                    (rhox + rhoy) ...
-                    + absorb_tau .* real(ifft2( absorb_nabla1 .* fft2(rho0 .* (duxdx + duydy)) )) ...
-                    - absorb_eta .* real(ifft2( absorb_nabla2 .* fft2(rhox + rhoy) )) ...
-                    + medium.BonA .* (rhox + rhoy).^2 ./ (2 .* rho0) ...
-                    );  
-                
-        end
-    end
-    
-%     GXTEST
-    if p_source >= t_index 
-        if strcmp(source.p_mode, 'dirichlet')
-            
-            % enforce the source values as a dirichlet boundary condition
-%             rhox(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-            p(p_source_pos_index) = source.p(p_source_sig_index, t_index);
-            
-        else
-            
-            % add the source values to the existing field values
-%             rhox(p_source_pos_index) = rhox(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-%             rhoy(p_source_pos_index) = rhoy(p_source_pos_index) + source.p(p_source_sig_index, t_index);       
-            p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-            
-        end
-    end
+
+
 %     GXTEST
     
-    % enforce initial conditions if source.p0 is defined instead of time
-    % varying sources
-    if t_index == 1 && isfield(source, 'p0')
+    if p_source >= t_index
+        p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
+%         p(p_source_pos_index) = source.p(p_source_sig_index, t_index);
+    end
     
-        % add the initial pressure to rho as a mass source
-        p    = source.p0;
-        rhox = source.p0 ./ (2 .* c.^2);
-        rhoy = source.p0 ./ (2 .* c.^2);
+    
+%     dpdt = (p - p_pre) ./ dt;
+    p_pre = p;
+    
         
-        % compute u(t = t1 - dt/2) based on u(dt/2) = -u(-dt/2) which
-        % forces u(t = t1) = 0 
-        ux_sgx = dt .* rho0_sgx_inv .* real(ifft2( bsxfun(@times, ddx_k_shift_pos, kappa .* fft2(p)) )) / 2;
-        uy_sgy = dt .* rho0_sgy_inv .* real(ifft2( bsxfun(@times, ddy_k_shift_pos, kappa .* fft2(p)) )) / 2; 
-
-    end  
-
-    % precompute fft of p here so p can be modified for visualisation
-    p_k = fft2(p);
+    
 
     % extract required sensor data from the pressure and particle velocity
     % fields if the number of time steps elapsed is greater than
@@ -1072,13 +796,6 @@ for t_index = index_start:index_step:index_end
         % run sub-function to extract the required data from the acoustic
         % variables
         sensor_data = kspaceFirstOrder_extractSensorData(2, sensor_data, file_index, sensor_mask_index, record, p, ux_sgx, uy_sgy, []);
-        
-        % extract acoustic pressure with directional response if required -
-        % this function needs kgrid and p_k so is not calculated within 
-        % _extractSensorData
-        if record.compute_directivity && (record.p || record.I || record.I_avg)
-            sensor_data.p(:, file_index) = directionalResponse(kgrid, sensor, sensor_mask_index, p_k);
-        end
         
     end
     
