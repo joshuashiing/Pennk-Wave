@@ -562,11 +562,16 @@ clear rho0_sgx rho0_sgy
 % PREPARE DERIVATIVE AND PML OPERATORS
 % =========================================================================
 
-% get the PML operators based on the reference sound speed and PML settings
-pml_x     = getPML(kgrid.Nx, kgrid.dx, kgrid.dt, c_ref, PML_x_size, PML_x_alpha, false,          1);
-pml_x_sgx = getPML(kgrid.Nx, kgrid.dx, kgrid.dt, c_ref, PML_x_size, PML_x_alpha, true && use_sg, 1);
-pml_y     = getPML(kgrid.Ny, kgrid.dy, kgrid.dt, c_ref, PML_y_size, PML_y_alpha, false,          2);
-pml_y_sgy = getPML(kgrid.Ny, kgrid.dy, kgrid.dt, c_ref, PML_y_size, PML_y_alpha, true && use_sg, 2);
+% % get the PML operators based on the reference sound speed and PML settings
+% pml_x     = getPML(kgrid.Nx, kgrid.dx, kgrid.dt, c_ref, PML_x_size, PML_x_alpha, false,          1);
+% pml_x_sgx = getPML(kgrid.Nx, kgrid.dx, kgrid.dt, c_ref, PML_x_size, PML_x_alpha, true && use_sg, 1);
+% pml_y     = getPML(kgrid.Ny, kgrid.dy, kgrid.dt, c_ref, PML_y_size, PML_y_alpha, false,          2);
+% pml_y_sgy = getPML(kgrid.Ny, kgrid.dy, kgrid.dt, c_ref, PML_y_size, PML_y_alpha, true && use_sg, 2);
+
+% GXTEST
+% Get PML coefficients
+pml_D = GX_getPML(kgrid.Nx, kgrid.Ny, kgrid.dx, kgrid.dt, c_ref, PML_x_size, PML_x_alpha);
+% GXTEST
 
 % define the k-space derivative operators, multiply by the staggered
 % grid shift operators, and then re-order using ifftshift (the option
@@ -710,11 +715,18 @@ for t_index = index_start:index_step:index_end
 %     % Not Work Acoustic FD
 
 %     Work Visco-acoustic
+%     q1 = q1 + dt * (csquare .* GX_del2_9pt(p, h) + ...
+%                     absorb_C1 .* q2 + ...
+%                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
+%                     absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
+%                     absorb_C4 .* GX_del2_9pt(q1, h));
     q1 = q1 + dt * (csquare .* GX_del2_9pt(p, h) + ...
                     absorb_C1 .* q2 + ...
                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
                     absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
-                    absorb_C4 .* GX_del2_9pt(q1, h));
+                    absorb_C4 .* GX_del2_9pt(q1, h) - ...
+                    2 * pml_D .* q1 - ...
+                    pml_D.^2 .* p);
     q2 = conv2(p, nabla_filter, 'same');
     pp = pp + dt * q1;
     p  = pp;

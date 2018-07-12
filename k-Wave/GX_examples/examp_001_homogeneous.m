@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 10;             % Quality factor
+Q = 5;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -30,7 +30,7 @@ f_rw_c = 200;       % Center frequency of ricker wavelet [Hz]
 x_src = 0.;          % Source location in the x direction [m]
 y_src = -34.5;       % Source location in the y direction [m]
 x_rec = 0.;          % Receiver location in the x direction [m]
-y_rec = 0;        % Receiver location in the y direction [m]
+y_rec = 34.5;        % Receiver location in the y direction [m]
 
 % =========================================================================
 % Simulation Parameters
@@ -93,16 +93,16 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'TF111111';
+% medium.mod_mech = 'TF111111';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
 % medium.mod_mech = 'FD111111';
-% medium.mod_mech = 'GXFD0';
+medium.mod_mech = 'GXFD0';
 % medium.mod_mech = 'lossless';
 
 
-d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
-% d3 = GXFD2D(kgrid, medium, source, sensor);
+% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+d3 = GXFD2D(kgrid, medium, source, sensor);
 
 % input_args = {'RecordMovie', true};
 % d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
@@ -132,8 +132,8 @@ subplot(2, 1, 1);
 % plot(kgrid.t_array, d1, 'k', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d2, 'b--', 'linewidth', 3); hold on;
 plot(kgrid.t_array, d3, 'r--', 'linewidth', 2);
-% title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
-title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech, ' (order 2)'], 'fontsize', 14); 
+title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech], 'fontsize', 14); 
+% title(['Q = ', num2str(Q), '  |  Red Dashed Line: ', medium.mod_mech, ' (order 2)'], 'fontsize', 14); 
 xlabel('Time (s)');
 set(gca, 'fontsize', 14);
 
