@@ -19,7 +19,7 @@ dy = 0.5;           % grid point spacing in the y direction [m]
 
 f0_m = 200;           % Reference frequency [Hz]
 c0_m = 2089;          % Phase velocity at reference frequency [m/s]
-Q = 100000000;             % Quality factor
+Q = 10;             % Quality factor
 density = 2200;     % Density [kg/m^3]
 
 % =========================================================================
@@ -93,16 +93,16 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-% medium.mod_mech = 'TF111111';
+medium.mod_mech = 'TF111111';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
 % medium.mod_mech = 'FD111111';
-medium.mod_mech = 'GXFD0';
+% medium.mod_mech = 'GXFD0';
 % medium.mod_mech = 'lossless';
 
 
-% d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
-d3 = GXFD2D(kgrid, medium, source, sensor);
+d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+% d3 = GXFD2D(kgrid, medium, source, sensor);
 
 % input_args = {'RecordMovie', true};
 % d3 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});

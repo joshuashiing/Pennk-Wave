@@ -611,8 +611,8 @@ uy_sgy  = castZeros([kgrid.Nx, kgrid.Ny]);
 % p_k     = castZeros([kgrid.Nx, kgrid.Ny]);
 
 % GXTEST
-dpdt    = castZeros([kgrid.Nx, kgrid.Ny]);
-p_pre   = castZeros([kgrid.Nx, kgrid.Ny]);
+% dpdt    = castZeros([kgrid.Nx, kgrid.Ny]);
+pp      = castZeros([kgrid.Nx, kgrid.Ny]);
 
 % q       = castZeros([kgrid.Nx, kgrid.Ny]);
 % p1      = castZeros([kgrid.Nx, kgrid.Ny]);
@@ -620,13 +620,14 @@ p_pre   = castZeros([kgrid.Nx, kgrid.Ny]);
 
 q1      = castZeros([kgrid.Nx, kgrid.Ny]);
 q2      = castZeros([kgrid.Nx, kgrid.Ny]);
+% q       = castZeros([kgrid.Nx, kgrid.Ny]);
 h       = kgrid.dx;
 % q3      = castZeros([kgrid.Nx, kgrid.Ny]);
 % hh = kgrid.dx .^ 4;
 
 % ux_sgx  = castZeros([kgrid.Nx + 1, kgrid.Ny]);
 % uy_sgy  = castZeros([kgrid.Nx, kgrid.Ny + 1]);
-rhoxy   = castZeros([kgrid.Nx, kgrid.Ny]);
+% rhoxy   = castZeros([kgrid.Nx, kgrid.Ny]);
 
 % GXTEST
 
@@ -697,77 +698,28 @@ tic;
 % start time loop
 for t_index = index_start:index_step:index_end
     
-%     p = p + dt * q1;
-%     q1 = q1 + dt * c.^2 .* GX_del2_9pt(p_pre, h);
-%     p_pre = p;
+%     % Work acoustic FD
+%     q = q + dt * c.^2 .* GX_del2_9pt(p, h);
+%     pp = pp + dt * q;
+%     p = pp;
+%     % Work acoustic FD
     
-%     q1 = q1 + dt .* GX_del2_9pt(p, h);
-%     p_pre = p_pre + dt * c.^2 .* q1;
-%     p = p_pre;
-% %     p = p + dt .* c.^2 .* q1;
-    
+%     % Not Work Acoustic FD
+%     q = q + dt * c.^2 .* GX_del2_9pt(p, h);
+%     p = p + dt * q;
+%     % Not Work Acoustic FD
 
-    q2 = conv2(p, nabla_filter, 'same');
-    q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
+%     Work Visco-acoustic
+    q1 = q1 + dt * (csquare .* GX_del2_9pt(p, h) + ...
                     absorb_C1 .* q2 + ...
                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
-                    absorb_C3 .* conv2(dpdt, nabla_filter, 'same') + ...
-                    absorb_C4 .* GX_del2_9pt(dpdt, h));
-    rhoxy = rhoxy + dt * q1;
-    p = c.^2 .* rhoxy;
+                    absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
+                    absorb_C4 .* GX_del2_9pt(q1, h));
+    q2 = conv2(p, nabla_filter, 'same');
+    pp = pp + dt * q1;
+    p  = pp;
+%     Work Visco-acoustic
     
-
-
-%     q1 = q1 + dt .* GX_del2_9pt(p, h);    
-%     rhoxy = rhoxy + dt * q1;
-%     p = c.^2 .* rhoxy;
-    
-    
-    
-    
-    
-%     GXTEST
-%     Finite difference scheme
-
-%     p = p + dt .* q1;
-%     if t_index == 1000
-%         pause
-%     end
-    
-    
-
-% %     max(abs(p(:)))
-% %     p_pre = p;
-%     p = p + dt * q1;
-%     q1 = q1 + dt * c.^2 .* (GX_del2_9pt(p_pre, h) + ...
-%                        absorb_C1 .* q2 + ...
-%                        absorb_C2 .* GX_del2_9pt(q2, h) + ...
-%                        absorb_C3 .* conv2(q1, nabla_filter, 'same') + ...
-%                        absorb_C4 .* GX_del2_9pt(q1, h));
-%     q2 = conv2(p, nabla_filter, 'same');
-%     p_pre = p;
-
-    
-
-
-
-%     q = q + GX_del2_9pt(p, kgrid.dx) * dt;
-%     rhoxy = rhoxy + dt * q;
-%     p = c.^2 .* rhoxy;
-    
-    
-% %     GXTEST Work!
-%     q2 = conv2(p, nabla_filter, 'same');
-%     q1 = q1 + dt * (GX_del2_9pt(p, h) + ...
-%                     absorb_C1 .* q2 + ...
-%                     absorb_C2 .* GX_del2_9pt(q2, h) + ...
-%                     absorb_C3 .* conv2(dpdt, nabla_filter, 'same') + ...
-%                     absorb_C4 .* GX_del2_9pt(dpdt, h));
-%     rhoxy = rhoxy + dt * q1;
-%     p = c.^2 .* rhoxy;
-% %     GXTEST Work!
-    dpdt = (p - p_pre) ./ dt;
-%     p_pre = p;
     
 
 
@@ -777,10 +729,6 @@ for t_index = index_start:index_step:index_end
         p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
 %         p(p_source_pos_index) = source.p(p_source_sig_index, t_index);
     end
-    
-    
-%     dpdt = (p - p_pre) ./ dt;
-    p_pre = p;
     
         
     

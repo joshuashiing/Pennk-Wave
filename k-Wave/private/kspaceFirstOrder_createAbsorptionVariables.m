@@ -187,14 +187,20 @@ elseif strcmp(equation_of_state, 'absorbing_GXFD0')
     c = c0 .* cos(pi * gamma / 2);
     w0 = medium.f0 * 2 * pi;
     
-    absorb_C1 = gamma .* w0 ./ c;
-    absorb_C2 = gamma .* c ./ w0;
-    absorb_C3 = -pi * gamma ./ c;
-    absorb_C4 = pi * gamma.^2 ./ w0;
+%     absorb_C1 = gamma .* w0 ./ c;
+%     absorb_C2 = gamma .* c ./ w0;
+%     absorb_C3 = -pi * gamma ./ c;
+%     absorb_C4 = pi * gamma.^2 ./ w0;
+    
+    absorb_C1 = gamma .* w0 .* c;
+    absorb_C2 = gamma .* c.^3 ./ w0;
+    absorb_C3 = -pi * gamma .* c;
+    absorb_C4 = pi * gamma.^2 .* c.^2 ./ w0;
     csquare = c .^ 2;
     
     h = kgrid.dx;
-    r = 4;
+%     r = 4;
+    r = 10;
     Nmax = max(kgrid.Nx, kgrid.Ny);
     nabla_filter = GX_FDFLfilter(1, r + 1, h);
     clear h r Nmax
