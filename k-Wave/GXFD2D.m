@@ -625,7 +625,7 @@ pp      = castZeros([kgrid.Nx, kgrid.Ny]);
 
 q1      = castZeros([kgrid.Nx, kgrid.Ny]);
 q2      = castZeros([kgrid.Nx, kgrid.Ny]);
-% q       = castZeros([kgrid.Nx, kgrid.Ny]);
+q       = castZeros([kgrid.Nx, kgrid.Ny]);
 h       = kgrid.dx;
 % q3      = castZeros([kgrid.Nx, kgrid.Ny]);
 % hh = kgrid.dx .^ 4;
@@ -739,7 +739,11 @@ for t_index = index_start:index_step:index_end
     
     if p_source >= t_index
         p(p_source_pos_index) = p(p_source_pos_index) + source.p(p_source_sig_index, t_index);
-%         p(p_source_pos_index) = source.p(p_source_sig_index, t_index);
+%         if t_index == 1
+%             p(p_source_pos_index) = 0;
+%         else
+%             p(p_source_pos_index) = p(p_source_pos_index) + (source.p(p_source_sig_index, t_index) - source.p(p_source_sig_index, t_index-1));
+%         end
     end
     
         
