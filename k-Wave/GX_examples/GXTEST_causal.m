@@ -1,6 +1,6 @@
 % Author: Guangchi Xing
-% Date: 10/19/2017
-% High frequency single station 
+% Date: 10/25/2018
+% Test causality in homogeneous model
 
 clear;
 
@@ -70,10 +70,16 @@ medium.sound_speed = medium.c0;
 [nx_src, ny_src] = close_grid_2d(kgrid, x_src, y_src);
 source.p_mask = zeros(Nx, Ny);
 source.p_mask(nx_src, ny_src) = 1;
-t_rw_c = 1 / f_rw_c * 2;
-nt_rw = 1 / f_rw_c * 4 / dt;
-rw = rickerwavelet(f_rw_c, dt, nt_rw, t_rw_c, 1);
-source.p = rw*100;
+% t_rw_c = 1 / f_rw_c * 2;
+% nt_rw = 1 / f_rw_c * 4 / dt;
+% rw = rickerwavelet(f_rw_c, dt, nt_rw, t_rw_c, 1);
+% source.p = rw*100;
+v_gp = 1 / f_rw_c / 4;
+td_gp = v_gp * 3;
+nt_gp = ceil((td_gp * 2) / dt);
+[t_gp, gp] = gaussian_pulse(100, td_gp, v_gp, dt, nt_gp);
+plot(t_gp, gp)
+source.p = gp;
 
 % Sensor
 [nx_rec, ny_rec] = close_grid_2d(kgrid, x_rec, y_rec);
@@ -93,7 +99,7 @@ d2 = kjar_analytical_2d(kgrid, medium, source, sensor);
 % =========================================================================
 % medium.mod_mech = 'TZ14';
 % medium.mod_mech = 'TZ17';
-medium.mod_mech = 'TF111111';
+medium.mod_mech = 'TF111110';
 % medium.mod_mech = 'DT17';
 % medium.mod_mech = 'TT17';
 % medium.mod_mech = 'FD111111';
