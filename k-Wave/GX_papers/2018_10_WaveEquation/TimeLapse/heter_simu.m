@@ -71,7 +71,7 @@ source.p_mask(nx_src, ny_src) = 1;
 t_rw_c = 1 / f_rw_c * 2;
 nt_rw = 1 / f_rw_c * 4 / dt;
 rw = rickerwavelet(f_rw_c, dt, nt_rw, t_rw_c, 1);
-source.p = rw*100;
+source.p = rw*1e3;
 
 % Sensor
 [nx_rec, ny_rec] = close_grid_2d(kgrid, x_rec, y_rec);

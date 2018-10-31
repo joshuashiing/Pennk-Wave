@@ -1022,7 +1022,8 @@ for t_index = index_start:index_step:index_end
         end
     end
     
-%     GXTEST
+
+% GXTEST
     if p_source >= t_index 
         if strcmp(source.p_mode, 'dirichlet')
             
