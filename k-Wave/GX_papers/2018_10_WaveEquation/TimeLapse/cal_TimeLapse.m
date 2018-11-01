@@ -81,7 +81,7 @@ save(mat_name, 'vp', 'rho', 'Q', 't_axis', 'd', '-append');
 % case 2
 % Time slice 21
 mat_name = 'case02'
-it = 21;
+it = 5;
 
 vp  = cell2mat(seisProps.vp(it));
 vs  = cell2mat(seisProps.vs(it));

@@ -6,7 +6,7 @@ clc
 
 load('conversion_bs03j_V1.mat');
 
-it_list = [1; 21; 41];
+it_list = [1; 5; 41];
 ni = length(it_list);
 
 % Grid parameters
