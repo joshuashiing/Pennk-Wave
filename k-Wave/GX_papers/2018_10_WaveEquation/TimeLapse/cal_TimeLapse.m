@@ -27,7 +27,8 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 % =========================================================================
 
 f_rw_c = 1000;                               % Center frequency of ricker wavelet [Hz]
-x_src = 1658.05;                            % Source location x in original coordinate [m]
+% x_src = 1658.05;                            % Source location x in original coordinate [m]
+x_src = 1650.10;
 y_src = 0;                                  % Source location y in original coordinate [m]
 % x_rec = [1635.1; 1650.1; 1658.05; 1680.1];	% Receiver location x in original coordinate [m]
 % y_rec = [30; 30; 30; 30];                   % Receiver location y in original coordinate [m]
