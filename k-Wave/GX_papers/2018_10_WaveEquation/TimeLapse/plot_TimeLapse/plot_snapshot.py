@@ -24,7 +24,8 @@ def main():
     b_lim = t_lim + (Nx - 1) * h
 
     x_src = 0
-    y_src = 1658.05
+    # y_src = 1658.05
+    y_src = 1650.10
     x_rec = 30 * np.ones(11)
     y_rec = np.linspace(1635.1, 1680.1, 11)
 
