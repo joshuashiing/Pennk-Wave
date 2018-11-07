@@ -32,10 +32,12 @@
 % get the name of the calling function
 calling_func = dbstack;
 
-% check for deprecated field_data outputs
-if num_outputs == 2 && ~strcmp(calling_func(3).name, 'benchmark')
-    error(['The output field_data has been deprecated. Please use sensor.record = {''p_final''} (etc) to return the final pressure field. See ' calling_func(2).name ' documentation for more information.']);
-end
+% GXTEST (mute check)
+% % check for deprecated field_data outputs
+% if num_outputs == 2 && ~strcmp(calling_func(3).name, 'benchmark')
+%     error(['The output field_data has been deprecated. Please use sensor.record = {''p_final''} (etc) to return the final pressure field. See ' calling_func(2).name ' documentation for more information.']);
+% end
+% GXTEST
 
 % check correct function has been called for the dimensionality of kgrid
 switch calling_func(2).name

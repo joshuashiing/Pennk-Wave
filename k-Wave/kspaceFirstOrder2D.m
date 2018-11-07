@@ -1,4 +1,5 @@
-function [sensor_data, mem_usage] = kspaceFirstOrder2D(kgrid, medium, source, sensor, varargin) %#ok<STOUT>
+% function [sensor_data, mem_usage] = kspaceFirstOrder2D(kgrid, medium, source, sensor, varargin) %#ok<STOUT>
+function [sensor_data, p_save, mem_usage] = kspaceFirstOrder2D(kgrid, medium, source, sensor, varargin) %#ok<STOUT>
 %KSPACEFIRSTORDER2D 2D time-domain simulation of wave propagation.
 %
 % DESCRIPTION:
@@ -674,6 +675,10 @@ disp('  starting time loop...');
 loop_start_time = clock;
 tic;
 
+% GXTEST (time index for wavefield recording)
+it_save = 1;
+% GXTEST
+
 % start time loop
 for t_index = index_start:index_step:index_end
     
@@ -1061,6 +1066,16 @@ for t_index = index_start:index_step:index_end
 
     % precompute fft of p here so p can be modified for visualisation
     p_k = fft2(p);
+    
+    % GXTEST (record wavefield)
+    if medium.save_pressure
+        if mod(t_index, medium.save_ndt) == 0
+            tmp = p((1+PML_x_size) : (end-PML_x_size), (1+PML_y_size) : (end-PML_y_size));
+            p_save(:, it_save) = tmp(:);
+            it_save = it_save + 1;
+        end
+    end
+    % GXTEST
 
     % extract required sensor data from the pressure and particle velocity
     % fields if the number of time steps elapsed is greater than

@@ -33,8 +33,7 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 dt = 1e-3;        % Time interval [s]
 t_max = 1.6;        % Simulation end time [s]
 f0 = 25;           % Reference frequency for simulation
-% args = {'PMLInside', false, 'PlotSim', false};
-args = {'PMLInside', false};
+args = {'PMLInside', false, 'PlotSim', false};
 
 % =========================================================================
 % Source & Receivers
@@ -75,53 +74,15 @@ f0 = ones(Nx, Ny) * f0;
 
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
-f_cutoff = 30;
-taper_ratio = 0.2;
 
-[d, p_save_fm] = rtm_fm_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
-                    stf, x_src(15), y_src(15), x_rec, y_rec, ...
-                    dt, t_max, mod_mech, f_cutoff, taper_ratio, -1, '', args);
-
-tmp = load('Data_example_01/CSG_015.mat');
-p_data = tmp.d;
-clear tmp
-[d, p_save_bp] = rtm_bp_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
-                    x_rec, y_rec, ...
-                    dt, t_max, mod_mech, f_cutoff, taper_ratio, -1, '', p_data, args);
-                
-% Fwavefield = reshape(wavefield_u.wavefield_p,kgrid.Nx,kgrid.Ny,size(wavefield_u.wavefield_p,2));
-% Rwavefield = reshape(wavefield_ru_Q.wavefield_p,kgrid.Nx,kgrid.Ny,size(wavefield_ru_Q.wavefield_p,2));
-
-p_save_fm1 = p_save_fm;
-p_save_bp1 = p_save_bp;
-n = size(p_save_fm, 2);
-
-p_save_fm = reshape(p_save_fm, Nx, Ny, n);
-p_save_bp = reshape(p_save_bp, Nx, Ny, n - 1);
-
-mig = zeros(Nx, Ny);
-for i = 100 : (n - 100)
-    mig = p_save_fm(:, :, i) .* p_save_bp(:, :, (n-i+1)) + mig;
+ex_name = 'Data_example_01';
+[~, ~] = mkdir(ex_name);
+for i = 1 : length(x_src)
+    fprintf(['Working on shot #', num2str(i, '%.3i'), '\n']);
+    d_mat_name = ['CSG_', num2str(i, '%.3i'),'.mat'];
+    d_mat_name = fullfile(ex_name, d_mat_name);
+    [d, t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
+                    stf, x_src(i), y_src(i), x_rec, y_rec, ...
+                    dt, t_max, mod_mech, -1, '', args);
+    save(d_mat_name, 'd', 't_axis');
 end
-imagesc(mig)
-
-% for i = 1:nt-10
-%     
-%     % cross-correlation imaging condition
-%     mig = snapshot0(:,:,i).*rtmsnapshot(:,:,nt-i+1)+mig;
-%     s2 = snapshot0(:,:,i).^2+s2;
-%     s3 = rtmsnapshot(:,:,i).^2+s3;
-% 
-% end
-
-% ex_name = 'Data_example_01';
-% [~, ~] = mkdir(ex_name);
-% for i = 1 : length(x_src)
-%     fprintf(['Working on shot #', num2str(i, '%.3i'), '\n']);
-%     d_mat_name = ['CSG_', num2str(i, '%.3i'),'.mat'];
-%     d_mat_name = fullfile(ex_name, d_mat_name);
-%     [d, t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
-%                     stf, x_src(i), y_src(i), x_rec, y_rec, ...
-%                     dt, t_max, mod_mech, -1, '', args);
-%     save(d_mat_name, 'd', 't_axis');
-% end
