@@ -1,6 +1,6 @@
-function [d, t_axis] = heter_simu(Nx, Ny, dx, dy, model_f0_m, model_f0, ...
+function [d, p_save, t_axis] = rtm_fm_simu(Nx, Ny, dx, dy, model_f0_m, model_f0, ...
     model_c0_m, model_Q, model_density, stf, x_src, y_src, x_rec, y_rec, ...
-    dt, t_max, mod_mech, t_snap, mat_name, args)
+    dt, t_max, mod_mech, f_cutoff, taper_ratio, t_snap, mat_name, args)
 
 % clear;
 % clc
@@ -69,10 +69,6 @@ medium.mod_mech = mod_mech;
 source.p_mask = zeros(Nx, Ny);
 source.p_mask(nx_src, ny_src) = 1;
 source.p = stf;
-% t_rw_c = 1 / f_rw_c * 2;
-% nt_rw = 1 / f_rw_c * 4 / dt;
-% rw = rickerwavelet(f_rw_c, dt, nt_rw, t_rw_c, 1);
-% source.p = rw*1e3;
 
 % Sensor
 [nx_rec, ny_rec] = close_grid_2d(kgrid, x_rec, y_rec);
@@ -84,13 +80,19 @@ if ~strcmp(mat_name, '') && t_snap >= 0
 end
 
 % =========================================================================
-% Forward modeling
+% RTM Q-compensated Forward modeling
 % =========================================================================
 
+medium.alpha_sign = [1, -1];
+medium.alpha_filter = getAlphaFilter(kgrid, medium, f_cutoff,taper_ratio);
+medium.save_ndt = 1;
+medium.save_pressure = true;
+
+
 if exist('args', 'var')
-    d = kspaceFirstOrder2D(kgrid, medium, source, sensor, args{:});
+    [d, p_save] = kspaceFirstOrder2D(kgrid, medium, source, sensor, args{:});
 else
-    d = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+    [d, p_save] = kspaceFirstOrder2D(kgrid, medium, source, sensor);
 end
 % d = kspaceFirstOrder2D(kgrid, medium, source, sensor, 'PMLInside', false, 'PlotSim', false);
 t_axis = kgrid.t_array;

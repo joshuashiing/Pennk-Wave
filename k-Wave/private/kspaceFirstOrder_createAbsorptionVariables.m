@@ -55,43 +55,47 @@ if strcmp(equation_of_state, 'absorbing')
         absorb_eta = 0;
     end
         
-    % pre-filter the absorption parameters if alpha_filter is defined (this
-    % is used for time-reversal photoacoustic image reconstruction
-    % with absorption compensation)
-    if isfield(medium, 'alpha_filter')
-                
-        % update command line status
-        disp('  filtering absorption variables...');        
-        
-        % frequency shift the absorption parameters
-        absorb_nabla1 = fftshift(absorb_nabla1);
-        absorb_nabla2 = fftshift(absorb_nabla2);
-                        
-        % apply the filter
-        absorb_nabla1 = absorb_nabla1 .* medium.alpha_filter;
-        absorb_nabla2 = absorb_nabla2 .* medium.alpha_filter;
+%     GXTEST (mute original alpha_filter)
+%     % pre-filter the absorption parameters if alpha_filter is defined (this
+%     % is used for time-reversal photoacoustic image reconstruction
+%     % with absorption compensation)
+%     if isfield(medium, 'alpha_filter')
+%                 
+%         % update command line status
+%         disp('  filtering absorption variables...');        
+%         
+%         % frequency shift the absorption parameters
+%         absorb_nabla1 = fftshift(absorb_nabla1);
+%         absorb_nabla2 = fftshift(absorb_nabla2);
+%                         
+%         % apply the filter
+%         absorb_nabla1 = absorb_nabla1 .* medium.alpha_filter;
+%         absorb_nabla2 = absorb_nabla2 .* medium.alpha_filter;
+% 
+%         % shift the parameters back
+%         absorb_nabla1 = ifftshift(absorb_nabla1);
+%         absorb_nabla2 = ifftshift(absorb_nabla2); 
+%            
+%     end    
+%     GXTEST
 
-        % shift the parameters back
-        absorb_nabla1 = ifftshift(absorb_nabla1);
-        absorb_nabla2 = ifftshift(absorb_nabla2); 
-           
-    end    
-
-    % modify the sign of the absorption operators if alpha_sign is defined
-    % (this is used for time-reversal photoacoustic image reconstruction
-    % with absorption compensation)
-    if isfield(medium, 'alpha_sign')
-       if numel(medium.alpha_sign) == 2
-           
-           % if two parameters are given, apply the first to the absorption
-           % parameter and the second to the disperion parameters
-           absorb_tau = sign(medium.alpha_sign(1)) .* absorb_tau;
-           absorb_eta = sign(medium.alpha_sign(2)) .* absorb_eta;
-           
-       else
-           error('medium.alpha_sign must be given as a 2 element array controlling absorption and dispersion, respectively.');
-       end
-    end
+%     GXTEST (mute original alpha_sign)
+%     % modify the sign of the absorption operators if alpha_sign is defined
+%     % (this is used for time-reversal photoacoustic image reconstruction
+%     % with absorption compensation)
+%     if isfield(medium, 'alpha_sign')
+%        if numel(medium.alpha_sign) == 2
+%            
+%            % if two parameters are given, apply the first to the absorption
+%            % parameter and the second to the disperion parameters
+%            absorb_tau = sign(medium.alpha_sign(1)) .* absorb_tau;
+%            absorb_eta = sign(medium.alpha_sign(2)) .* absorb_eta;
+%            
+%        else
+%            error('medium.alpha_sign must be given as a 2 element array controlling absorption and dispersion, respectively.');
+%        end
+%     end
+%     GXTEST
     
 % GXTEST    
 elseif strcmp(equation_of_state, 'absorbing_TZ14')
@@ -254,14 +258,58 @@ elseif strcmp(equation_of_state, 'absorbing_TF111110')
     absorb_C_k4 = pi * gamma .* c;
     absorb_C_k5 = pi * gamma.^2 .* c.^2 ./ w0;
     
+%     absorb_nabla1 = (kgrid.k) .^ (-1);
+%     absorb_nabla1(isinf(absorb_nabla1)) = 0;
+%     absorb_nabla1 = ifftshift(absorb_nabla1);
+%     absorb_nabla2 = kgrid.k;
+%     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+%     absorb_nabla2 = ifftshift(absorb_nabla2);
+    
     absorb_nabla1 = (kgrid.k) .^ (-1);
-    absorb_nabla1(isinf(absorb_nabla1)) = 0;
-    absorb_nabla1 = ifftshift(absorb_nabla1);
     absorb_nabla2 = kgrid.k;
+    absorb_nabla1(isinf(absorb_nabla1)) = 0;
     absorb_nabla2(isinf(absorb_nabla2)) = 0;
+    if isfield(medium, 'alpha_filter')
+        absorb_nabla1 = absorb_nabla1 .* medium.alpha_filter;
+        absorb_nabla2 = absorb_nabla2 .* medium.alpha_filter;
+    end
+    absorb_nabla1 = ifftshift(absorb_nabla1);
     absorb_nabla2 = ifftshift(absorb_nabla2);
     
+    if isfield(medium, 'alpha_sign')
+        if numel(medium.alpha_sign) == 2
+            absorb_C_k1 = sign(medium.alpha_sign(1)) .* absorb_C_k1;
+            absorb_C_k3 = sign(medium.alpha_sign(1)) .* absorb_C_k3;
+            absorb_C_k4 = sign(medium.alpha_sign(2)) .* absorb_C_k4;
+            absorb_C_k5 = sign(medium.alpha_sign(2)) .* absorb_C_k5;
+        end
+    end
+    
     clear c0 w0 gamma
+    %     GXTEST (mute original alpha_filter)
+%     % pre-filter the absorption parameters if alpha_filter is defined (this
+%     % is used for time-reversal photoacoustic image reconstruction
+%     % with absorption compensation)
+%     if isfield(medium, 'alpha_filter')
+%                 
+%         % update command line status
+%         disp('  filtering absorption variables...');        
+%         
+%         % frequency shift the absorption parameters
+%         absorb_nabla1 = fftshift(absorb_nabla1);
+%         absorb_nabla2 = fftshift(absorb_nabla2);
+%                         
+%         % apply the filter
+%         absorb_nabla1 = absorb_nabla1 .* medium.alpha_filter;
+%         absorb_nabla2 = absorb_nabla2 .* medium.alpha_filter;
+% 
+%         % shift the parameters back
+%         absorb_nabla1 = ifftshift(absorb_nabla1);
+%         absorb_nabla2 = ifftshift(absorb_nabla2); 
+%            
+%     end    
+%     GXTEST
+
     
 elseif strcmp(equation_of_state, 'absorbing_TF111100')
     % Calculate media parameter matrices
