@@ -65,6 +65,9 @@ rho = ones(Nx, Ny) * 2200;
 rho(1 : 50, :) = 1800;
 Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
+
+Q(:) = 999999;
+
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
 
@@ -75,7 +78,7 @@ f0 = ones(Nx, Ny) * f0;
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
 
-ex_name = 'Data_example_01';
+ex_name = 'Data_example_01_HQ';
 [~, ~] = mkdir(ex_name);
 for i = 1 : length(x_src)
     fprintf(['Working on shot #', num2str(i, '%.3i'), '\n']);

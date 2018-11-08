@@ -66,6 +66,11 @@ rho = ones(Nx, Ny) * 2200;
 rho(1 : 50, :) = 1800;
 Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
+
+vp(:) = 1800;
+rho(:) = 1800;
+Q(:) = 9999999;
+
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
 
@@ -100,7 +105,7 @@ p_save_fm = reshape(p_save_fm, Nx, Ny, n);
 p_save_bp = reshape(p_save_bp, Nx, Ny, n - 1);
 
 mig = zeros(Nx, Ny);
-for i = 100 : (n - 100)
+for i = 2 : (n - 2)
     mig = p_save_fm(:, :, i) .* p_save_bp(:, :, (n-i+1)) + mig;
 end
 imagesc(mig)
