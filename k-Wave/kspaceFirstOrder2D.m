@@ -1068,7 +1068,8 @@ for t_index = index_start:index_step:index_end
     p_k = fft2(p);
     
     % GXTEST (record wavefield)
-    if medium.save_pressure
+    
+    if isfield(medium, 'save_pressure') && medium.save_pressure
         if mod(t_index, medium.save_ndt) == 0
             tmp = p((1+PML_x_size) : (end-PML_x_size), (1+PML_y_size) : (end-PML_y_size));
             p_save(:, it_save) = tmp(:);
