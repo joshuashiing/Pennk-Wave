@@ -41,13 +41,17 @@ clim = max(abs(img(:)));
 imagesc(img, [-clim, clim]); colorbar;
 pause
 
+%%
 figure(2);
 subplot(121);
-img = mig_s1(cut:end, :);
-clim = max(abs(img(:)));
+% img = mig_s1(cut:end, :);
+img = diff(mig_s1(cut:end, :),2,1);
+clim = max(abs(img(:))) / 1;
 imagesc(img, [-clim, clim]); colorbar;
 
 subplot(122); 
-img = mig_s2(cut:end, :);
-clim = max(abs(img(:)));
+% img = mig_s2(cut:end, :);
+% img = del2(mig_s1(cut:end, :));
+img = diff(mig_s2(cut:end, :),2,1);
+%clim = max(abs(img(:))) / 1;
 imagesc(img, [-clim, clim]); colorbar;
