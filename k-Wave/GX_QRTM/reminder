@@ -1,0 +1,6 @@
+example_01: Two layer model
+example_02: Gas chimney; dt = 0.25 ms; f0 = 10 Hz
+example_03: Gas chimney; dt = 0.5  ms; f0 = 10 Hz
+example_04: Gas chimney; dt = 0.5  ms; f0 = 15 Hz
+example_05: Gas chimney; dt = 1    ms; f0 = 15 Hz
+example_06: Gas chimney; dt = 0.25 ms; f0 = 15 Hz

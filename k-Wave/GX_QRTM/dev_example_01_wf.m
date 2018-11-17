@@ -68,9 +68,9 @@ Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
 
 % Q(:) = 999999;
-Q = imgaussfilt(Q, 16);
-vp = imgaussfilt(vp, 16);
-rho = imgaussfilt(rho, 16);
+Q = imgaussfilt(Q, 8);
+vp = imgaussfilt(vp, 8);
+rho = imgaussfilt(rho, 8);
 
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
@@ -81,12 +81,12 @@ f0 = ones(Nx, Ny) * f0;
 
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
-f_cutoff = 40;
-taper_ratio = 0.2;
+f_cutoff = 80;
+taper_ratio = 0.5;
 
 ex_name = 'Data_example_01';
 clear p_save_fm p_save_bp
-for i = 1 : 30
+for i = 1 : length(x_src)
     fprintf(['Working on shot #', num2str(i, '%.3i'), '\n']);
     [d, p_save_fm] = rtm_fm_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
                     stf, x_src(i), y_src(i), x_rec, y_rec, ...

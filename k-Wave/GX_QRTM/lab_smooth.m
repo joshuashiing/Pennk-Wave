@@ -1,6 +1,6 @@
 % =========================================================================
-% Example to develop Q-compensated RTM
-% Date 11/01/2018
+% Test the smoothing parameters
+% Date 11/13/2018
 % Author: Guangchi Xing
 
 
@@ -33,7 +33,7 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 dt = 1e-3;        % Time interval [s]
 t_max = 1.6;        % Simulation end time [s]
 f0 = 25;           % Reference frequency for simulation
-args = {'PMLInside', false};
+args = {'PMLInside', false, 'PlotSim', false};
 
 % =========================================================================
 % Source & Receivers
@@ -66,11 +66,12 @@ rho(1 : 50, :) = 1800;
 Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
 
-Q(:) = 999999;
-
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
 
+sigma_list = [2, 4, 8, 16];
+% c0 = imgaussfilt(c0, 4);
+% rho = imgaussfilt(rho, 4);
 % =========================================================================
 % Run!!!
 % =========================================================================
@@ -78,17 +79,25 @@ f0 = ones(Nx, Ny) * f0;
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
 
-[d1, t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
-                    stf, x_src(7), y_src(7), x_rec, y_rec, ...
-                    dt, t_max, mod_mech, -1, '', args);
+i = 10;
 
-vp = imgaussfilt(vp, 16)
-rho = imgaussfilt(rho, 16)
-[d2, t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
-                    stf, x_src(7), y_src(7), x_rec, y_rec, ...
+[d0, t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
+                    stf, x_src(i), y_src(i), x_rec, y_rec, ...
                     dt, t_max, mod_mech, -1, '', args);
+d = zeros(size(d0, 1), size(d0, 2), length(sigma_list));
+for j = 1 : length(sigma_list)
+    sigma = sigma_list(j);
+    vp_sm = imgaussfilt(vp, sigma);
+    Q_sm = imgaussfilt(Q, sigma);
+    rho_sm = imgaussfilt(rho, sigma);
+    [d(:, :, j), t_axis] = heter_simu(Nx, Ny, dx, dy, f0_model, f0, vp_sm, Q_sm, rho_sm, ...
+                    stf, x_src(i), y_src(i), x_rec, y_rec, ...
+                    dt, t_max, mod_mech, -1, '', args);
+end
 
-clim = [-0.5, 0.5];
-subplot(131); imagesc(d1', clim);
-subplot(132); imagesc(d2', clim);
-subplot(133); imagesc(d1' - d2', clim);
+r = 100;
+plot(t_axis, d0(r, :), 'k', 'linewidth', 2); hold on;
+clist = {'b', 'r', 'c', 'g', 'y'};
+for j = 1 : length(sigma_list)
+    plot(t_axis, d(r, :, j), [clist{j} '--'], 'linewidth', 2);
+end

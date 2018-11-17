@@ -1,0 +1,55 @@
+clear;clc
+
+migdir = 'Data_example_01/';
+% mig_list = {'mig.mat', 'mig_rf.mat', 'mig_ac.mat', 'mig_co.mat', 'mig_co_rf.mat', 'mig_co_ac.mat'};
+% mig_list = {'mig.mat', 'mig_rf.mat', 'mig_ac.mat', 'mig_cd.mat', 'mig_cd_rf.mat', 'mig_cd_ac.mat'};
+% mig_list = {'mig_cd.mat', 'mig_cd_rf.mat', 'mig_cd_ac.mat', 'mig_co.mat', 'mig_co_rf.mat', 'mig_co_ac.mat'};
+% mig_list = {'mig_cd.mat', 'mig_cd_rf.mat', 'mig_cd_ac.mat'};
+mig_list = {'mig_cd_rf.mat', 'mig_cd.mat', 'mig_cd_tq.mat', 'mig_cd_ac.mat'};
+
+n1 = 2;
+n2 = 2;
+scale = 1;
+i = 150;
+
+clist = {'k', 'r', 'b', 'm', 'c', 'g', 'y'};
+cut = 1;
+clim = 100;
+
+% imaging condition without laplacian
+for l = 1 : length(mig_list)
+    mig_file = [migdir mig_list{l}];
+    d = load(mig_file);
+    n = size(d.mig1, 3);
+    
+    img = sum(d.mig1(cut:end, :, :), 3);
+    img = del2(img);
+    
+    figure(1);
+    subplot(n1, n2, l);
+%     clim = max(abs(img(:))) * scale;
+    imagesc(img, [-clim, clim]);
+    colorbar;
+    
+    figure(3);
+    plot(img(:, i), [clist{l} '-'], 'linewidth', 2); hold on;
+end
+
+% imaging condition with laplacian
+for l = 1 : length(mig_list)
+    mig_file = [migdir mig_list{l}];
+    d = load(mig_file);
+    n = size(d.mig2, 3);
+    
+    img = sum(d.mig1(cut:end, :, :), 3);
+    img = del2(img);
+    
+    figure(2);
+    subplot(n1, n2, l);
+%     clim = max(abs(img(:))) * scale;
+    imagesc(img, [-clim, clim]);
+    colorbar;
+    
+    figure(4);
+    plot(img(:, i), [clist{l} '-'], 'linewidth', 2); hold on;
+end

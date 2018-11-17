@@ -30,9 +30,9 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 % Simulation Parameters
 % =========================================================================
 
-dt = 1e-3;        % Time interval [s]
+dt = 0.5e-3;        % Time interval [s]
 t_max = 1.6;        % Simulation end time [s]
-f0 = 25;           % Reference frequency for simulation
+f0 = 15;           % Reference frequency for simulation
 args = {'PMLInside', false, 'PlotSim', false};
 
 % =========================================================================
@@ -49,7 +49,7 @@ y_src = y_src + yc;
 x_rec = x_rec + xc;
 y_rec = y_rec + yc;
 
-f_rw_c = 25;        % Center frequency of ricker wavelet [Hz]
+f_rw_c = 15;        % Center frequency of ricker wavelet [Hz]
 A_rw = 1e2;         % Amplitude of the ricker wavelet
 t_rw_c = 1 / f_rw_c * 2;
 nt_rw = 1 / f_rw_c * 4 / dt;
@@ -66,8 +66,6 @@ rho(1 : 50, :) = 1800;
 Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
 
-Q(:) = 999999;
-
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
 
@@ -78,7 +76,7 @@ f0 = ones(Nx, Ny) * f0;
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
 
-ex_name = 'Data_example_01_HQ';
+ex_name = 'Data_example_01';
 [~, ~] = mkdir(ex_name);
 for i = 1 : length(x_src)
     fprintf(['Working on shot #', num2str(i, '%.3i'), '\n']);

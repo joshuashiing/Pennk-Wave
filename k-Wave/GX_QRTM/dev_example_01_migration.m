@@ -33,8 +33,8 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 dt = 1e-3;        % Time interval [s]
 t_max = 1.6;        % Simulation end time [s]
 f0 = 25;           % Reference frequency for simulation
-% args = {'PMLInside', false, 'PlotSim', false};
-args = {'PMLInside', false};
+args = {'PMLInside', false, 'PlotSim', false};
+% args = {'PMLInside', false};
 
 % =========================================================================
 % Source & Receivers
@@ -67,10 +67,10 @@ rho(1 : 50, :) = 1800;
 Q = ones(Nx, Ny) * 100;
 Q(1 : 50, :) = 30;
 
-Q(:) = 999999;
-
-vp = imgaussfilt(vp, 16);
-rho = imgaussfilt(rho, 16);
+% Q(:) = 999999;
+Q = imgaussfilt(Q, 8);
+vp = imgaussfilt(vp, 8);
+rho = imgaussfilt(rho, 8);
 
 f0_model = ones(Nx, Ny) * 100;
 f0 = ones(Nx, Ny) * f0;
@@ -81,8 +81,8 @@ f0 = ones(Nx, Ny) * f0;
 
 mod_mech = 'TF111110';
 % mod_mech = 'lossless';
-f_cutoff = 100;
-taper_ratio = 0.2;
+f_cutoff = 80;
+taper_ratio = 0.5;
 
     
 % [d, p_save_fm] = rtm_fm_simu(Nx, Ny, dx, dy, f0_model, f0, vp, Q, rho, ...
@@ -98,9 +98,10 @@ taper_ratio = 0.2;
 
 
 % Migration
-mig1 = zeros(Nx, Ny, 30);
-mig2 = zeros(Nx, Ny, 30);
-for j = 1 : 30
+% mig1 = zeros(Nx, Ny, 30);
+mig1 = zeros(Nx, Ny, length(x_src));
+mig2 = zeros(Nx, Ny, length(x_src));
+for j = 1 : length(x_src)
     fprintf(['Working on shot #', num2str(j, '%.3i'), '\n']);
     wffile = ['Data_example_01/WF_' num2str(j, '%.3i') '.mat'];
     wf = load(wffile);
@@ -116,6 +117,7 @@ for j = 1 : 30
     end
 end
 
+% save('Data_example_02/mig_co.mat', 'mig');
 save('Data_example_01/mig.mat', 'mig1', 'mig2');
 
 % subplot(121); imagesc(mig1); colorbar;

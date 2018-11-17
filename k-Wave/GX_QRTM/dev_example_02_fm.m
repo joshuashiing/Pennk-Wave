@@ -32,9 +32,9 @@ yc = kgrid_tmp.y_vec(1) - y0;   % Correction for y direction
 % Simulation Parameters
 % =========================================================================
 
-dt = 1e-3;        % Time interval [s]
+dt = 0.25e-3;        % Time interval [s]
 t_max = 2;        % Simulation end time [s]
-f0 = 15;           % Reference frequency for simulation
+f0 = 10;           % Reference frequency for simulation
 args = {'PMLInside', false, 'PlotSim', false};
 % args = {'PMLInside', false};
 
@@ -52,7 +52,7 @@ y_src = y_src + yc;
 x_rec = x_rec + xc;
 y_rec = y_rec + yc;
 
-f_rw_c = 15;        % Center frequency of ricker wavelet [Hz]
+f_rw_c = 10;        % Center frequency of ricker wavelet [Hz]
 A_rw = 1e2;         % Amplitude of the ricker wavelet
 t_rw_c = 1 / f_rw_c * 2;
 nt_rw = 1 / f_rw_c * 4 / dt;
