@@ -11,7 +11,7 @@ scale = 1;
 cut = 1;
 t_cut = 70;
 % t_cut = 1;
-clim = 5;
+clim = 2;
 
 i = 220;
 clist = {'k', 'r', 'b', 'm', 'c', 'g', 'y'};
@@ -41,7 +41,7 @@ for l = 1 : length(mig_list)
     d = load(mig_file);
     n = size(d.mig2, 3);
     
-    img = sum(d.mig1(cut:end, :, :), 3);
+    img = sum(d.mig2(cut:end, :, :), 3);
     img = del2(img);
     
     figure(3);
