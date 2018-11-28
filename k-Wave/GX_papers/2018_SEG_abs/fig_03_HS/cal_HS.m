@@ -7,14 +7,14 @@ clc
 
 Nx = 256;           % number of grid points in the x direction
 Ny = 1024;           % number of grid points in the y direction
-dx = 0.5;           % grid point spacing in the x direction [m]
-dy = 0.5;           % grid point spacing in the y direction [m]
+dx = 1;           % grid point spacing in the x direction [m]
+dy = 1;           % grid point spacing in the y direction [m]
 
 % =========================================================================
 % Medium Parameters
 % =========================================================================
 
-f0_m = 100;           % Reference frequency [Hz]
+f0_m = 1500;           % Reference frequency [Hz]
 c0_m = 2164;          % Phase velocity at reference frequency [m/s]
 % Q = 32;             % Quality factor
 density = 2200;     % Density [kg/m^3]
@@ -33,8 +33,8 @@ y_rec = 200.0;        % Receiver location in the y direction [m] (456m)
 % Simulation Parameters
 % =========================================================================
 
-dt = 5e-5;        % Time interval [s] (0.05 ms)
-t_max = 0.40;        % Simulation end time [s]
+dt = 0.2e-3;        % Time interval [s] (0.05 ms)
+t_max = 0.26;        % Simulation end time [s]
 f0 = 100;           % Reference frequency for simulation
 mod_mech = 'TF111110';  % Numerical modeling mechanism
 
